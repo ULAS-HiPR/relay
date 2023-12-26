@@ -40,7 +40,7 @@ After=network.target
 Type=simple
 User=bxrne
 WorkingDirectory=/home/bxrne/health
-ExecStart=/home/bxrne/health/health
+ExecStart=/home/bxrne/relay/health/health
 Restart=on-failure
 
 [Install]
