@@ -1,5 +1,5 @@
 [amqp]
-host = "192.168.68.121"
+host = "localhost"
 port = 5672
 virtual_host = "%2f"
 username = "guest"
