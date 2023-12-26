@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-TARGET=aarch64-unknown-linux-gnu
+TARGET=arm-unknown-linux-gnueabihf
 USER=bxrne
 PI_IP=192.168.68.121
 RUST_VERSION=1.72.0  # Replace with the version you want to use
@@ -21,4 +21,4 @@ export PATH=$HOME/.cargo/bin:$PATH
 cross build --release --target $TARGET
 
 # Copy the binary to the target device (Raspberry Pi)
-scp -r ./target/release/health $USER@$PI_IP:/home/$USER/relay/health
+scp -r ./target/$TARGET/release/health $USER@$PI_IP:/home/$USER/relay/health
