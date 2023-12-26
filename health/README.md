@@ -12,7 +12,7 @@ Memory Info: Total: 33554432 KB, Free: 1907264 KB, Available: 15391628 KB, Buffe
 Total Processes: 605
 ```
 
-## Usage
+## Usage
 
 ```bash
 # Install dependencies
