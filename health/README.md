@@ -21,3 +21,28 @@ Use the bash script `release.sh` to compile release binaries for the target arch
 Docker daemon running on the host machine.
 
 *Note: You may need to update the ip address or user in `release.sh` to match your target.*
+
+## Deployment to systemd
+
+```bash
+sudo cp health.service /etc/systemd/system/health.service
+sudo systemctl daemon-reload
+sudo systemctl enable health.service
+sudo systemctl start health.service
+```
+
+```service
+[Unit]
+Description=Health Service
+After=network.target
+
+[Service]
+Type=simple
+User=bxrne
+WorkingDirectory=/home/bxrne/health
+ExecStart=/home/bxrne/health/health
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```

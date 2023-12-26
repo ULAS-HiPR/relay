@@ -1,0 +1,13 @@
+[Unit]
+Description=Health Service
+After=network.target
+
+[Service]
+Type=simple
+User=bxrne
+WorkingDirectory=/home/bxrne/health
+ExecStart=/home/bxrne/health/health
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
