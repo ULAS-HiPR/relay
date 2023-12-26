@@ -24,12 +24,7 @@ Docker daemon running on the host machine.
 
 ## Deployment to systemd
 
-```bash
-sudo cp health.service /etc/systemd/system/health.service
-sudo systemctl daemon-reload
-sudo systemctl enable health.service
-sudo systemctl start health.service
-```
+Run `deploy.sh` to copy the systemd service file to the target and enable it.
 
 ```service
 [Unit]
