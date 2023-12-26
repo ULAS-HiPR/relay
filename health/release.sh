@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-TARGET=arm-unknown-linux-gnueabihf
+TARGET=arm-unknown-linux-gnueabihf # Raspberry Pi Zero W
 USER=bxrne
-PI_IP=192.168.68.121
-RUST_VERSION=1.72.0  # Replace with the version you want to use
+TARGET_IP=192.168.68.121
+RUST_VERSION=1.72.0  # Required for cross compilation (cross-rs)
 
 # Install the Rust toolchain directly
 rustup toolchain install $RUST_VERSION --profile minimal
@@ -17,8 +17,8 @@ cargo install -f cross
 # Add to path
 export PATH=$HOME/.cargo/bin:$PATH
 
-# Build with the specified target
+# Build with the specified target for release
 cross build --release --target $TARGET
 
-# Copy the binary to the target device (Raspberry Pi)
-scp -r ./target/$TARGET/release/health $USER@$PI_IP:/home/bxrne/relay/health/
+# Copy the binary to the target device
+scp -r ./target/$TARGET/release/health $USER@$TARGET_IP:/home/bxrne/relay/health/
