@@ -15,13 +15,13 @@ pub struct AppConfig {
     pub amqp: AmqpConfig,
 }
 
-pub trait ConfigLoader {
+pub trait Loader {
     fn load_config(&self) -> Result<AppConfig, config::ConfigError>;
 }
 
-pub struct ProductionConfigLoader;
+pub struct ConfigLoader;
 
-impl ConfigLoader for ProductionConfigLoader {
+impl Loader for ConfigLoader {
     fn load_config(&self) -> Result<AppConfig, config::ConfigError> {
         let mut settings = Config::default();
         settings.merge(File::with_name("../config")).unwrap();
@@ -35,7 +35,7 @@ mod tests {
 
     #[test]
     fn test_load_config() {
-        let config_loader: Box<dyn ConfigLoader> = Box::new(ProductionConfigLoader);
+        let config_loader: Box<dyn Loader> = Box::new(ConfigLoader);
         let result = config_loader.load_config();
 
         assert!(result.is_ok());
