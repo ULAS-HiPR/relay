@@ -12,15 +12,12 @@ Memory Info: Total: 33554432 KB, Free: 1907264 KB, Available: 15391628 KB, Buffe
 Total Processes: 605
 ```
 
-## Usage
+## Compilation
 
-```bash
-# Install dependencies
-cargo install 
+Due to hardware limitations, cross compilation is required.
+Use the bash script `release.sh` to compile release binaries for the target architecture and `scp` them to the target.
 
-# Build for release
-cargo build --release
+**Requires:**
+Docker daemon running on the host machine.
 
-# Run
-cargo run --release
-```
+*Note: You may need to update the ip address or user in `release.sh` to match your target.*
