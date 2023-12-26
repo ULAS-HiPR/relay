@@ -4,6 +4,8 @@ use lapin::options::BasicPublishOptions;
 use lapin::{BasicProperties, Connection, ConnectionProperties};
 use serde::Deserialize;
 use tokio::time::{sleep, Duration};
+use std::time;
+
 
 #[derive(Debug, Deserialize)]
 struct AmqpConfig {
@@ -42,16 +44,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .queue_declare(queue_name, Default::default(), Default::default())
         .await?;
 
-    let duration = Duration::from_secs(60);
+    let duration = Duration::from_secs(1);
     loop {
         let cpu_speed = cpu_speed().unwrap();
         let loadavg = loadavg().unwrap();
         let mem_info = mem_info().unwrap();
         let proc_total = proc_total().unwrap();
+        let current_time = time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs();
 
 
         let payload = format!(
-            "CPU Speed: {} MHz\nLoad Average: {:.2}, {:.2}, {:.2}\nMemory Info: Total: {} KB, Free: {} KB, Available: {} KB, Buffers: {} KB, Cached: {} KB\nTotal Processes: {}",
+            "Time: {}\nCPU Speed: {} MHz\nLoad Average: {:.2}, {:.2}, {:.2}\nMemory Info: Total: {} KB, Free: {} KB, Available: {} KB, Buffers: {} KB, Cached: {} KB\nTotal Processes: {}",
+            current_time,
             cpu_speed,
             loadavg.one, loadavg.five, loadavg.fifteen,
             mem_info.total, mem_info.free, mem_info.avail, mem_info.buffers, mem_info.cached,
@@ -67,6 +71,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 BasicProperties::default(),
             )
             .await?;
+
+        println!("[{}] Payload sent", current_time);
 
         sleep(duration).await;
     }
