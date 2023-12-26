@@ -21,4 +21,6 @@ export PATH=$HOME/.cargo/bin:$PATH
 cross build --release --target $TARGET
 
 # Copy the binary to the target device (Raspberry Pi)
-scp -r ./target/$TARGET/release/health $USER@$PI_IP:/home/$USER/relay/health
+scp -r ./target/$TARGET/release/health $USER@$PI_IP:/home/$USER/relay/health/
+
+scp -r ./target/$TARGET/release/health $USER@$PI_IP:/home/bxrne/relay/health/
