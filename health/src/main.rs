@@ -48,8 +48,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
             .await?;
 
-        println!("[{}] Payload sent", current_time);
-
         sleep(duration).await;
     }
 }
