@@ -39,7 +39,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::connect(&addr, ConnectionProperties::default()).await?;
 
     let channel = conn.create_channel().await?;
-    let queue_name = "healthcheck";
+    let queue_name = "health";
     channel
         .queue_declare(queue_name, Default::default(), Default::default())
         .await?;
