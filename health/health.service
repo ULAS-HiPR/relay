@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=bxrne
-WorkingDirectory=/home/bxrne/health
+WorkingDirectory=/home/bxrne/relay/health
 ExecStart=/home/bxrne/relay/health/health
 Restart=on-failure
 
