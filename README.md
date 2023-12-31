@@ -1,30 +1,39 @@
 # relay
 
-A processing chain for CanSats to be ran on limited hardware (Raspberry Pi Zero W) in real time for data collection, transmission and CanSat control.
+Real time processing chain for AgriSat running as microservices via systemd.
+AgriSat is a CanSat aboard the Sionna rocket which will conduct visual evaluation via machine learning of land for agricultural use.
+Relay adopts a full agnostic approach using RabbitMQ to communicate active data so services can be written in any language.
 
 ## Getting Started
-
 ```bash
 git clone https://github.com/theadambyrne/relay.git
 cd relay
 
-# See each service for more information
+# See each service's README for more information
 ```
+
+## Testing
+All services must be suitably unit tested to verify correct behaviour and correct exception handling.
+Make sure to create a CI pipeline to run your tests for feature branches. Ensure these are ran on PR and on merge so we can verify a valid system.
 
 ## Services
 
-| Service | Description | Language | Docs |
+| Service | Description | Language | Details |
 | ------- | ----------- | -------- | ------ |
 | health | Device vitals monitoring | Rust | [README](./health/README.md) |
 
-## Communication
+> Note: IPs, ports, MQ server details, etc. are stored in `config.toml` and are loaded into the environment at runtime ([see here](config.toml)).
 
-Services communicate via RabbitMQ. Which is configured on the target with permissions for remote access via IP address.
 
-## Deployment
+### Releasing to target
 
-Services are deployed to `systemd` via scp. See each service for more information.
+For compiled languages `scp` the binary over into its correct location (keep in mind we will clone this repo onto targt device to ensure paths remain valid especially for configuration. In the case of interpreted languages no action other than calling the interpreter in the service execution step is required.
 
-## Configuration
+> `release.sh` - remote push the binary to the target device having cross compiled it
 
-Environment variables for URLs, IPs, ports, etc. are stored in `config.toml` and are loaded into the environment at runtime ([see here](config.toml)).
+
+### Orchestration (deployment)
+
+Writing a `.service` file is more straight forward than you'd think. You specificy where the program is, what is running it and when to run it. See `health` for more details.
+
+> `deploy.sh` - informing `systemd` of the new service via registration.
