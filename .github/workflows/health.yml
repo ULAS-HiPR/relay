@@ -1,22 +1,31 @@
-name: Health Service
+name: Health CI
 
 on:
- push:
- branches: [ "main" ]
- pull_request:
- branches: [ "main" ]
-
-env:
- CARGO_TERM_COLOR: always
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
- build:
+  build:
+    runs-on: ubuntu-latest
 
- runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        path: health  # Specify the path to the subdirectory
+        ref: main     # The branch to checkout
 
- steps:
- - uses: actions/checkout@v3
- - name: Build
-   run: cargo build --verbose --manifest-path ./health/Cargo.toml
- - name: Run tests
-   run: cargo test --verbose --manifest-path ./health/Cargo.toml
+    - name: Install Rust
+      uses: actions/setup-rust@v1
+      with:
+        rust-version: stable
+
+    - name: Build and test
+      working-directory: health  # Set the working directory for subsequent steps
+      run: |
+        cargo build --verbose
+        cargo test --verbose
