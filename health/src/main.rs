@@ -1,37 +1,53 @@
-use config_loader::{ConfigLoader, Loader};
-use lapin::options::BasicPublishOptions;
-use lapin::{BasicProperties, Connection, ConnectionProperties};
-use std::time;
-use tokio::time::{sleep, Duration};
+use config_loader::Config;
 
 mod config_loader;
 mod system_info;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let config_loader: Box<dyn Loader> = Box::new(ConfigLoader);
-    let app_config = config_loader.load_config()?;
+    // Load configuration using ConfigLoader
+    let app_config = Config::load()?;
 
     let addr = format!(
         "amqp://{}:{}@{}:{}/{}",
-        app_config.amqp.username,
-        app_config.amqp.password,
-        app_config.amqp.host,
-        app_config.amqp.port,
-        app_config.amqp.virtual_host
+        app_config
+            .get_section("amqp")
+            .and_then(|amqp| amqp.get("username"))
+            .and_then(|value| value.as_str())
+            .unwrap_or_default(),
+        app_config
+            .get_section("amqp")
+            .and_then(|amqp| amqp.get("password"))
+            .and_then(|value| value.as_str())
+            .unwrap_or_default(),
+        app_config
+            .get_section("amqp")
+            .and_then(|amqp| amqp.get("host"))
+            .and_then(|value| value.as_str())
+            .unwrap_or_default(),
+        app_config
+            .get_section("amqp")
+            .and_then(|amqp| amqp.get("port"))
+            .and_then(|value| value.as_integer())
+            .unwrap_or_default(),
+        app_config
+            .get_section("amqp")
+            .and_then(|amqp| amqp.get("virtual_host"))
+            .and_then(|value| value.as_str())
+            .unwrap_or_default()
     );
 
-    let conn = Connection::connect(&addr, ConnectionProperties::default()).await?;
+    let conn = lapin::Connection::connect(&addr, lapin::ConnectionProperties::default()).await?;
     let channel = conn.create_channel().await?;
     let queue_name = "health";
     channel
         .queue_declare(queue_name, Default::default(), Default::default())
         .await?;
 
-    let duration = Duration::from_secs(1);
+    let duration = std::time::Duration::from_secs(1);
     loop {
-        let current_time = time::SystemTime::now()
-            .duration_since(time::UNIX_EPOCH)
+        let current_time = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_secs();
         let system_info = system_info::gather_system_info().await?;
@@ -42,12 +58,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .basic_publish(
                 "",
                 queue_name,
-                BasicPublishOptions::default(),
+                lapin::options::BasicPublishOptions::default(),
                 payload.as_bytes(),
-                BasicProperties::default(),
+                lapin::BasicProperties::default(),
             )
             .await?;
 
-        sleep(duration).await;
+        tokio::time::sleep(duration).await;
     }
 }
