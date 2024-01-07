@@ -1,5 +1,7 @@
 # health
 
+![Health Test](https://github.com/ULAS-HiPR/relay/actions/workflows/health.yml/badge.svg?branch=main)
+
 A service for monitoring device vitals and sending them to a RabbitMQ queue `health` written in Rust.
 
 ## Payload
