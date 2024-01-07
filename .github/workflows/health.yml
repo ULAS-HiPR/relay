@@ -1,28 +1,20 @@
-name: Health test
+name: Health Test
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'health/**'
-    pull_request:
-        branches:
-            - main
-        paths:
-            - 'health/**'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-
-        steps:
-        - uses: actions/checkout@v2
-        - name: Setup Rust
-            uses: actions-rs/toolchain@v1
-            with:
-                toolchain: stable
-                override: true
-        - name: Cargo Test
-            working-directory: ./health
-            run: cargo test -- --test-threads=1
+  test:
+    runs-on: ubuntu-latest
+    name: Testing
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test local rust"
+        uses: Kristories/cargo-test@v1.0.0
+        with:
+          manifest-path: './health/Cargo.toml'
