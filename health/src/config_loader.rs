@@ -1,31 +1,25 @@
-use config::{Config, File};
-use serde::Deserialize;
+use std::fs;
+use toml::{map::Map, Value};
 
-#[derive(Debug, Deserialize)]
-pub struct AmqpConfig {
-    pub host: String,
-    pub port: u16,
-    pub virtual_host: String,
-    pub username: String,
-    pub password: String,
+#[derive(Debug)]
+pub struct Config {
+    data: Map<String, Value>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct AppConfig {
-    pub amqp: AmqpConfig,
-}
+impl Config {
+    pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
+        let file_content = fs::read_to_string("../config.toml")?;
+        let toml_value: Value = toml::from_str(&file_content)?;
 
-pub trait Loader {
-    fn load_config(&self) -> Result<AppConfig, config::ConfigError>;
-}
+        if let Value::Table(map) = toml_value {
+            Ok(Config { data: map })
+        } else {
+            Err("Invalid TOML format".into())
+        }
+    }
 
-pub struct ConfigLoader;
-
-impl Loader for ConfigLoader {
-    fn load_config(&self) -> Result<AppConfig, config::ConfigError> {
-        let mut settings = Config::default();
-        settings.merge(File::with_name("../config")).unwrap();
-        settings.try_into()
+    pub fn get_section(&self, section_name: &str) -> Option<&Value> {
+        self.data.get(section_name)
     }
 }
 
@@ -35,17 +29,26 @@ mod tests {
 
     #[test]
     fn test_load_config() {
-        let config_loader: Box<dyn Loader> = Box::new(ConfigLoader);
-        let result = config_loader.load_config();
+        let config = Config::load();
 
-        assert!(result.is_ok());
-
-        let app_config = result.unwrap();
-
-        assert_eq!(app_config.amqp.host, "localhost");
-        assert_eq!(app_config.amqp.port, 5672);
-        assert_eq!(app_config.amqp.virtual_host, "%2f");
-        assert_eq!(app_config.amqp.username, "guest");
-        assert_eq!(app_config.amqp.password, "guest");
+        assert!(config.is_ok());
     }
+
+    #[test]
+    fn test_get_section() {
+        let config = Config::load().unwrap();
+
+        let section = config.get_section("amqp");
+
+        assert!(section.is_some());
+    }
+
+    #[test]
+    fn test_get_section_invalid() {
+        let config = Config::load().unwrap();
+
+        let section = config.get_section("invalid");
+
+        assert!(section.is_none());
+    }    
 }
