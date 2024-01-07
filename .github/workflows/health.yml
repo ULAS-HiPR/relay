@@ -2,9 +2,13 @@ name: Health test
 
 on:
     push:
+        branches:
+            - main
         paths:
             - 'health/**'
     pull_request:
+        branches:
+            - main
         paths:
             - 'health/**'
 
