@@ -5,7 +5,6 @@ mod system_info;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Load configuration using ConfigLoader
     let app_config = Config::load()?;
 
     let addr = format!(
