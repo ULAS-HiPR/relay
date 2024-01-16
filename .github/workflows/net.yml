@@ -23,6 +23,7 @@ jobs:
           environment-file: ./net/environment.yml
           python-version: 3.8
           auto-activate-base: false
+          channels: conda-forge
       - shell: bash -l {0}
         run: |
           conda info
