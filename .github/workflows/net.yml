@@ -9,27 +9,26 @@ on:
       - main
 
 jobs:
-  miniconda:
-    name: Miniconda ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-        matrix:
-            os: ["ubuntu-latest"]
+  test:
+    name: Ex4 Linux
+    runs-on: "ubuntu-latest"
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
-      - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           activate-environment: net
-          environment-file: ./net/environment.yml
-          python-version: 3.8
-          auto-activate-base: false
-          channels: conda-forge
-      - shell: bash -l {0}
-        run: |
+          python-version: 3.6
+          channels: conda-forge,spyder-ide
+          allow-softlinks: true
+          channel-priority: flexible
+          show-channel-urls: true
+          use-only-tar-bz2: true
+          environment-file: net/environment.yml
+      - run: |
           conda info
           conda list
-      - name: Run pytest
-        shell: bash -l {0}
-        run: |
-            conda install pytest
-            pytest
+          conda config --show-sources
+          conda config --show
