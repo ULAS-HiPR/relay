@@ -20,7 +20,7 @@ jobs:
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
-        environment-file: environment.yml
+        environment-file: net/environment.yml
 
     - name: Activate Conda environment
       run: conda activate net
