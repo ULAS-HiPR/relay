@@ -17,17 +17,13 @@ jobs:
         shell: bash -el {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          activate-environment: net
           python-version: 3.8
-          channels: conda-forge
-          allow-softlinks: true
-          show-channel-urls: true
-          use-only-tar-bz2: false
-          environment-file: net/environment.yml
-      - run: |
-          conda info
-          conda list
-          conda config --show-sources
-          conda config --show
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          python -m unittest discover tests/
