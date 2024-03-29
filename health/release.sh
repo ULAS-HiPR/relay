@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 TARGET=arm-unknown-linux-gnueabihf # Raspberry Pi Zero W
-USER=bxrne
-TARGET_IP=192.168.68.121
+USER=admin
+TARGET_IP=192.168.0.27
 RUST_VERSION=1.72.0  # Required for cross compilation (cross-rs)
 
 # Install the Rust toolchain directly
@@ -21,4 +21,4 @@ export PATH=$HOME/.cargo/bin:$PATH
 cross build --release --target $TARGET
 
 # Copy the binary to the target device
-scp -r ./target/$TARGET/release/health $USER@$TARGET_IP:/home/bxrne/relay/health/
+scp -r ./target/$TARGET/release/health $USER@$TARGET_IP:/home/admin/relay/health/
