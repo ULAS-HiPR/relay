@@ -13,7 +13,7 @@ After=network.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=python3 $SOURCE_DIR/agrinet.py
+ExecStart=python3 $SOURCE_DIR/main.py
 
 [Install]
 WantedBy=multi-user.target
