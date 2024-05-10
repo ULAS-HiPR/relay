@@ -23,3 +23,12 @@ inference/  # Inference results from the agrinet service
 telemetry/  # Telemetry data from the LoRa module
 odometry/   # Data collected by the odometry service
 ```
+
+## Deployment
+
+To deploy the services, run the following commands:
+
+```sh
+chmod +x deploy.sh
+./deploy.sh # runs each services' ./deploy.sh script
+```
