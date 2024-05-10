@@ -15,14 +15,7 @@ Exploiting the built-in systemd service manager, relay uses `.service` files to 
 
 ## Data
 
-All recorded data is persisted in each service's directory. The data is organized as follows:
-
-```sh
-captures/   # Still images taken by the camera/
-results/  # Inference results from the agrinet/ service
-logs/  # telemetry/ data from the LoRa module
-logs/   # Data collected by the odometry/ service
-```
+All recorded data is persisted in each service's `results/` directory. Some services sit a watchdog on others' files to wait on new data.
 
 ## Deployment
 

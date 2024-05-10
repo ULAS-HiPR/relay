@@ -7,7 +7,7 @@ from utils.Model import Generator
 from utils.DataLoader import load_single, save_result
 from utils.EnviroIndices import parse_indices
 
-WATCH_DIR = "/home/agrisat/relay/camera/captures"
+WATCH_DIR = "/home/agrisat/relay/camera/results"
 OUTPUT_DIR = "/home/agrisat/relay/agrinet/results"
 
 
