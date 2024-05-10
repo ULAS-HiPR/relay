@@ -39,7 +39,7 @@ func (c *Camera) Init() error {
 func main() {
 	camera := &Camera{
 		OutputDir: "/home/agrisat/relay/camera/results",
-		Period:    2000, // keep it small to allow mounting (seems to be ~4 sec at runtime)
+		Period:    300, // keep it small to allow mounting (seems to be ~4 sec at runtime)
 		Width:     640,
 		Height:    480,
 	}
@@ -55,5 +55,6 @@ func main() {
 	for {
 		<-ticker.C
 		camera.Capture()
+		time.Sleep(time.Duration(camera.Period) * time.Second)
 	}
 }
