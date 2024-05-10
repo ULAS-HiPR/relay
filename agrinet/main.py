@@ -7,8 +7,8 @@ from utils.Model import Generator
 from utils.DataLoader import load_single, save_result
 from utils.EnviroIndices import parse_indices
 
-WATCH_DIR = "/home/agrisat/relay/data/captures"
-OUTPUT_DIR = "/home/agrisat/relay/data/inference"
+WATCH_DIR = "/home/agrisat/relay/camera/captures"
+OUTPUT_DIR = "/home/agrisat/relay/agrinet/results"
 
 
 class ImageHandler(FileSystemEventHandler):
