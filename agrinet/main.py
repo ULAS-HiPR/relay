@@ -7,8 +7,8 @@ from utils.Model import Generator
 from utils.DataLoader import load_single, save_result
 from utils.EnviroIndices import parse_indices
 
-WATCH_DIR = "/home/agrisat/relay/camera/results"
-OUTPUT_DIR = "/home/agrisat/relay/agrinet/results"
+WATCH_DIR = "/home/agrisat/relay/results/camera"
+OUTPUT_DIR = "/home/agrisat/relay/results/agrinet"
 
 
 class ImageHandler(FileSystemEventHandler):
@@ -55,7 +55,7 @@ def main():
 
     generator = Generator()
     try:
-        generator.load_weights("generator_weights")
+        generator.load_weights("generator_weights.h5")
         logger.debug("Model loaded")
     except Exception as e:
         logger.critical("Error while loading weights: {}".format(e))
