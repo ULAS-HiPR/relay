@@ -10,7 +10,6 @@ import (
 
 type Camera struct {
 	OutputDir string
-	Period    int
 	Width     int
 	Height    int
 }
@@ -18,7 +17,7 @@ type Camera struct {
 func (c *Camera) Capture() {
 	filename := time.Now().Format(time.RFC3339)
 	Filename := fmt.Sprintf("%s/%s.jpg", c.OutputDir, filename)
-	cmd := exec.Command("libcamera-jpeg", "-o", Filename, "-t", fmt.Sprintf("%d", c.Period), "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height))
+	cmd := exec.Command("libcamera-jpeg", "-o", Filename, "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height), "--signal")
 
 	err := cmd.Run()
 	if err != nil {
@@ -39,7 +38,6 @@ func (c *Camera) Init() error {
 func main() {
 	camera := &Camera{
 		OutputDir: "/home/agrisat/relay/camera/results",
-		Period:    300, // keep it small to allow mounting (seems to be ~4 sec at runtime)
 		Width:     640,
 		Height:    480,
 	}
@@ -55,6 +53,6 @@ func main() {
 	for {
 		<-ticker.C
 		camera.Capture()
-		time.Sleep(time.Duration(camera.Period) * time.Second)
+		fmt.Println("Picture taken")
 	}
 }
