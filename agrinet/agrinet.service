@@ -1,10 +1,10 @@
 [Unit]
-Description=Camera Service
+Description=Agrinet Service
 After=network.target
 
 [Service]
 User=agrisat
-ExecStart=/usr/bin/go run /home/agrisat/relay/camera/main.go
+ExecStart=/usr/bin/python /home/agrisat/relay/agrinet/main.py
 Restart=always
 
 [Install]
