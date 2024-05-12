@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"time"
+	"os/exec"
+	"sync"
 )
 
 type Camera struct {
