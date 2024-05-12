@@ -26,5 +26,5 @@ _gopath/
 .DS_Store
 Thumbs.db
 
-# Model
-generator_weights
+
+*.h5
