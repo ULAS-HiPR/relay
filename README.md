@@ -6,20 +6,23 @@ A lightweight approach to a distributed processing chain for a CanSat mission us
 
 Exploiting the built-in systemd service manager, relay uses `.service` files to orchestrate the execution of them, handle dependencies and restart them in case of failure. The services are:
 
-| Service | Description |
-| --- | --- |
-| `agrinet/` | Inference on camera images using Pix2Pix to generate NIR from RGB |
-| `camera/` | Script to take and save still images on a schedule |
-| `telemetry/` | Communication with the ground station using a LoRa module |
-| `odometry/` | Data collection (altitude, temperature, pressure, gps) |
+| Service | Description | Stack |
+| --- | --- | --- |
+| `agrinet/` | Inference on camera images using Pix2Pix to generate NIR from RGB | Python, TensorFlow |
+| `camera/` | Script to take and save still images on a ticker | Go, libcamera |
+| `telemetry/` | Communication with the ground station using a LoRa module | Python, RPi.GPIO |
+| `odometry/` | Data collection (altitude, temperature, pressure, gps) | Python, RPi.GPIO |
 
 ## Data
 
-All recorded data is persisted in the `data/` directory. The data is structured as follows:
+All recorded data is persisted in the `results` directory under a subdir named after the service that generated it. 
+If using File IO like in camera, spin off those in goroutines so pictures can be taken every second regardless.
+
+## Deployment
+
+To deploy the services, run the following commands:
 
 ```sh
-captures/   # Still images taken by the camera
-inference/  # Inference results from the agrinet service
-telemetry/  # Telemetry data from the LoRa module
-odometry/   # Data collected by the odometry service
+chmod +x deploy.sh
+./deploy.sh # runs each services' ./deploy.sh script
 ```

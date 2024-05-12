@@ -10,36 +10,31 @@ import (
 
 type Camera struct {
 	OutputDir string
-	Period    int
 	Width     int
 	Height    int
 }
 
-func (c *Camera) Capture() {
-	filename := time.Now().Format(time.RFC3339)
-	Filename := fmt.Sprintf("%s/%s.jpg", c.OutputDir, filename)
-	cmd := exec.Command("libcamera-jpeg", "-o", Filename, "-t", fmt.Sprintf("%d", c.Period), "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height))
-
+func (c *Camera) Capture() error {
+	timestamp := time.Now().Format(time.RFC3339)
+	filepath := fmt.Sprintf("%s/%s.jpg", c.OutputDir, timestamp)
+	cmd := exec.Command("libcamera-jpeg", "-o", filepath, "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height), "--signal") // signal makes it take a picture immediately
 	err := cmd.Run()
 	if err != nil {
-		log.Println(err)
+		return err
 	}
+	return nil
 }
 
 func (c *Camera) Init() error {
-	dir := c.OutputDir
-
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(c.OutputDir, 0755); err != nil {
 		return err
 	}
-
 	return nil
 }
 
 func main() {
 	camera := &Camera{
-		OutputDir: "/home/agrisat/relay/data/captures",
-		Period:    2000, // keep it small to allow mounting (seems to be ~4 sec at runtime)
+		OutputDir: "/home/agrisat/relay/results/camera",
 		Width:     640,
 		Height:    480,
 	}
@@ -54,6 +49,7 @@ func main() {
 
 	for {
 		<-ticker.C
-		camera.Capture()
+		go camera.Capture()
+		fmt.Print(".")
 	}
 }

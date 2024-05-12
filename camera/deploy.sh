@@ -1,34 +1,15 @@
 #!/bin/bash
 
-PROGRAM_NAME="ASCamera"
-SOURCE_DIR="/home/agrisat/relay/camera"
+SERVICE_FILE=camera.service
+GO_PROGRAM=main.go
+GO_BINARY=/usr/local/bin/camera
 
-DEST_DIR="/usr/local/bin"
-SERVICE_DIR="/etc/systemd/system"
+go build -o $GO_BINARY $GO_PROGRAM
+sudo chmod +x $GO_BINARY
 
-# Compile the Go program
-cd "$SOURCE_DIR" || exit
-go build -o "$PROGRAM_NAME"
-
-# Move the binary to the destination directory
-sudo mv "$PROGRAM_NAME" "$DEST_DIR"
-
-# Create the systemd service file
-sudo tee "$SERVICE_DIR/$PROGRAM_NAME.service" > /dev/null << EOF
-[Unit]
-Description=Agrisat Camera Service
-After=network.target
-
-[Service]
-Type=simple
-Restart=always
-ExecStart=$DEST_DIR/$PROGRAM_NAME
-
-[Install]
-WantedBy=multi-user.target
-EOF
+sudo mv $SERVICE_FILE /etc/systemd/system/
 
 sudo systemctl daemon-reload
-sudo systemctl enable "$PROGRAM_NAME.service"
-sudo systemctl start "$PROGRAM_NAME.service"
-sudo systemctl status "$PROGRAM_NAME.service"
+sudo systemctl enable camera.service
+sudo systemctl start camera.service
+sudo systemctl status camera.service
