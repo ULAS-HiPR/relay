@@ -25,3 +25,6 @@ _gopath/
 *.orig
 .DS_Store
 Thumbs.db
+
+# Model
+generator_weights
