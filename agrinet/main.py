@@ -55,7 +55,7 @@ def main():
 
     generator = Generator()
     try:
-        generator.load_weights("generator_weights")
+        generator.load_weights("generator_weights.h5")
         logger.debug("Model loaded")
     except Exception as e:
         logger.critical("Error while loading weights: {}".format(e))
