@@ -15,9 +15,9 @@ type Camera struct {
 }
 
 func (c *Camera) Capture() {
-	filename := time.Now().Format(time.RFC3339)
-	Filename := fmt.Sprintf("%s/%s.jpg", c.OutputDir, filename)
-	cmd := exec.Command("libcamera-jpeg", "-o", Filename, "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height), "--signal")
+	timestamp := time.Now().Format(time.RFC3339)
+	filepath := fmt.Sprintf("%s/%s.jpg", c.OutputDir, timestamp)
+	cmd := exec.Command("libcamera-jpeg", "-o", filepath, "--width", fmt.Sprintf("%d", c.Width), "--height", fmt.Sprintf("%d", c.Height), "--signal")
 
 	err := cmd.Run()
 	if err != nil {
@@ -26,9 +26,7 @@ func (c *Camera) Capture() {
 }
 
 func (c *Camera) Init() error {
-	dir := c.OutputDir
-
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(c.OutputDir, 0755); err != nil {
 		return err
 	}
 
