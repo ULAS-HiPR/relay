@@ -35,7 +35,7 @@ func (c *Camera) Init() error {
 
 func main() {
 	camera := &Camera{
-		OutputDir: "/home/agrisat/relay/camera/results",
+		OutputDir: "/home/agrisat/results/camera",
 		Width:     640,
 		Height:    480,
 	}
