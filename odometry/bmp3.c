@@ -1206,7 +1206,6 @@ int8_t bmp3_soft_reset(struct bmp3_dev *dev)
 
     /* Check for null pointer in the device structure*/
     rslt = null_ptr_check(dev);
-
     /* Proceed if null check is fine */
     if (rslt == BMP3_OK)
     {

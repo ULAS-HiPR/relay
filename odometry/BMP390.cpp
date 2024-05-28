@@ -2,10 +2,9 @@
 #include <iostream>
 #include <pigpio.h>
 #include <math.h>
+#include "bmp3.h"
 
 #define BMP3XX_DEFAULT_ADDRESS (0x77) 
-
-stat
 
 BMP390::BMP390(void) {
   //_meas_end = 0;
@@ -13,18 +12,22 @@ BMP390::BMP390(void) {
   std::cout << "work pls";
 }
 
+int g_handler = -1;
 // Our hardware interface functions
 
-
 bool BMP390::begin_I2C(uint8_t addr){
-  int initBus = i2cOpen(1, addr, 0);
-  if (initBus == -1){
+  int handler = i2cOpen(1, addr, 0);
+  g_handler = handler;
+  if (handler == -1){
     std::cout << "Failed :(";
     return -1;
   }
-  std::cout << "Yay :)";
+
+
 
   the_sensor.chip_id = addr;
+  printf("Sensor reset failed with error code: %d\n",  the_sensor.chip_id);
+
   the_sensor.intf = BMP3_I2C_INTF;
   the_sensor.read = &i2c_read;
   the_sensor.write = &i2c_write;
@@ -40,9 +43,12 @@ bool BMP390::_init(void) {
 
   /* Reset the sensor */
   rslt = bmp3_soft_reset(&the_sensor);
-  if (rslt != BMP3_OK)
-    return false;
 
+   if (rslt == BMP3_OK) {
+        printf("Sensor reset successful\n");
+    } else {
+        printf("Sensor reset failed with error code: %d\n", rslt);
+    }
   rslt = bmp3_init(&the_sensor);
 
 
@@ -189,14 +195,88 @@ bool BMP390::setOutputDataRate(uint8_t odr) {
   return true;
 }
 
-int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
-                void *intf_ptr) {
+int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
   // Serial.print("I2C read address 0x"); Serial.print(reg_addr, HEX);
   // Serial.print(" len "); Serial.println(len, HEX);
 
-  if (!_____wtfdoiputhere->write_then_read(&reg_addr, 1, reg_data, len))
+  if (!i2c_write_then_read(reinterpret_cast<char*>(&reg_addr), 1, reinterpret_cast<char*>(reg_data), len)) {
     return 1;
+  }
 
   return 0;
 }
 
+// Implementing the i2c_write_then_read function
+bool i2c_write_then_read(char *write_buffer, size_t write_len, char *read_buffer, size_t read_len) {
+  // Write to the device
+  if (i2cWriteDevice(g_handler, write_buffer, write_len) != 0) {
+    std::cerr << "I2C write failed" << std::endl;
+    return false;
+  }
+
+  // Read from the device
+  if (i2cReadDevice(g_handler, read_buffer, read_len) != read_len) {
+    std::cerr << "I2C read failed" << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr) {
+  char write_buffer[len + 1];
+  write_buffer[0] = reg_addr;
+  std::copy(reg_data, reg_data + len, write_buffer + 1);
+
+  if (i2cWriteDevice(g_handler, write_buffer, len + 1) != 0) {
+    std::cerr << "I2C write failed" << std::endl;
+    return 1;
+  }
+  return 0;
+}
+
+
+static void delay_usec(uint32_t us, void *intf_ptr) { gpioDelay(us); }
+
+static int8_t validate_trimming_param(struct bmp3_dev *dev) {
+  int8_t rslt;
+  uint8_t crc = 0xFF;
+  uint8_t stored_crc;
+  uint8_t trim_param[21];
+  uint8_t i;
+
+  rslt = bmp3_get_regs(BMP3_REG_CALIB_DATA, trim_param, 21, dev);
+  if (rslt == BMP3_OK) {
+    for (i = 0; i < 21; i++) {
+      crc = (uint8_t)cal_crc(crc, trim_param[i]);
+    }
+
+    crc = (crc ^ 0xFF);
+    rslt = bmp3_get_regs(0x30, &stored_crc, 1, dev);
+    if (stored_crc != crc) {
+      rslt = -1;
+    }
+  }
+
+  return rslt;
+}
+
+static int8_t cal_crc(uint8_t seed, uint8_t data) {
+  int8_t poly = 0x1D;
+  int8_t var2;
+  uint8_t i;
+
+  for (i = 0; i < 8; i++) {
+    if ((seed & 0x80) ^ (data & 0x80)) {
+      var2 = 1;
+    } else {
+      var2 = 0;
+    }
+
+    seed = (seed & 0x7F) << 1;
+    data = (data & 0x7F) << 1;
+    seed = seed ^ (uint8_t)(poly * var2);
+  }
+
+  return (int8_t)seed;
+}
