@@ -37,5 +37,17 @@ private:
   unsigned long _meas_end;
 
   struct bmp3_dev the_sensor;
+
+  static int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
+                        void *intf_ptr);
+  static int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
+                       void *intf_ptr);
+  static int8_t spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
+                       void *intf_ptr);
+  static int8_t spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
+                        void *intf_ptr);
+  static void delay_usec(uint32_t us, void *intf_ptr);
+  static int8_t validate_trimming_param(struct bmp3_dev *dev);
+  static int8_t cal_crc(uint8_t seed, uint8_t data);
 };
 
