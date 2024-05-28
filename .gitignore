@@ -6,6 +6,10 @@ __pycache__/
 *.go
 _gopath/
 
+#C++
+BMP390
+altimeter
+
 # Images
 *.jpg
 *.jpeg

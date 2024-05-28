@@ -1,18 +1,14 @@
-#ifndef __BMP3XX_H__
-#define __BMP3XX_H__
-
 #include "bmp3.h"
-#include "wiringPiI2C.h"
+
 
 #define BMP3XX_DEFAULT_ADDRESS (0x77) ///< The default I2C address
 
-class Adafruit_BMP3XX {
-public:
-  Adafruit_BMP3XX();
 
-    // change this to wiring pi i2c
-  bool begin_I2C(uint8_t addr = BMP3XX_DEFAULT_ADDRESS,
-                 );
+class BMP390 {
+public:
+  BMP390();
+
+  bool begin_I2C(uint8_t addr = BMP3XX_DEFAULT_ADDRESS);
   uint8_t chipID(void);
   float readTemperature(void);
   float readPressure(void);
@@ -32,9 +28,6 @@ public:
   double pressure;
 
 private:
-// change stuff here, what? who knows
-  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
-
   bool _init(void);
 
   bool _filterEnabled, _tempOSEnabled, _presOSEnabled, _ODREnabled;
@@ -43,8 +36,6 @@ private:
   int8_t _cs;
   unsigned long _meas_end;
 
-
   struct bmp3_dev the_sensor;
 };
 
-#endif
