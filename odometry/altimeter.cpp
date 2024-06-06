@@ -15,14 +15,19 @@ int main(void) {
             // Successfully initialized BMP390 sensor
             // Now you can perform sensor readings or other operations
             // For example:
+            int count = 0;
+            while(count < 100){
             float temperature = bmp.readTemperature();
             float pressure = bmp.readPressure();
             float altitude = bmp.readAltitude(1013.25); // Provide sea level pressure as argument
             
             // Print sensor readings
-            printf("Temperature: %.2f°C\n", temperature);
+            printf("Temperature: %f°C\n", temperature);
             printf("Pressure: %.2f Pa\n", pressure);
             printf("Altitude: %.2f meters\n", altitude);
+            count++;
+            time_sleep(1.0);
+            }
         } else {
             // Failed to initialize BMP390 sensor
             printf("Failed to initialize BMP390 sensor via I2C\n");

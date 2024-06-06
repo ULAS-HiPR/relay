@@ -22,7 +22,7 @@ bool BMP390::begin_I2C(uint8_t addr){
     std::cout << "Failed :(";
     return -1;
   }
-
+  
 
 
   the_sensor.chip_id = addr;
@@ -31,7 +31,7 @@ bool BMP390::begin_I2C(uint8_t addr){
   the_sensor.intf = BMP3_I2C_INTF;
   the_sensor.read = &i2c_read;
   the_sensor.write = &i2c_write;
-  //the_sensor.intf_ptr = g_i2c_dev; idk if i need this
+  the_sensor.intf_ptr = &g_handler;
   the_sensor.dummy_byte = 0;
 
   return _init();
@@ -196,8 +196,6 @@ bool BMP390::setOutputDataRate(uint8_t odr) {
 }
 
 int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-  // Serial.print("I2C read address 0x"); Serial.print(reg_addr, HEX);
-  // Serial.print(" len "); Serial.println(len, HEX);
 
   if (!i2c_write_then_read(reinterpret_cast<char*>(&reg_addr), 1, reinterpret_cast<char*>(reg_data), len)) {
     return 1;
