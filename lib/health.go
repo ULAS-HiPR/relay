@@ -1,4 +1,4 @@
-package main
+package health
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Function to check for errors
@@ -25,7 +24,7 @@ func readFile(filename string) string {
 }
 
 // Function to get CPU temperature
-func getCPUtemp() string {
+func GetCPUtemp() float64 {
 	// CPU temperature is stored in /sys/class/thermal/thermal_zone0/temp
 	tempStr := readFile("/sys/class/thermal/thermal_zone0/temp")
 
@@ -34,12 +33,11 @@ func getCPUtemp() string {
 	check(err)
 	tempCelsius := float64(tempInt) / 1000.0
 
-	return fmt.Sprintf("%.2f°C", tempCelsius)
+	return tempCelsius
 }
 
 // Function to get CPU usage
-func getCPUusage() string {
-	// CPU usage information is stored in /proc/stat
+func GetCPUusage() float64 {
 	content := readFile("/proc/stat")
 
 	lines := strings.Split(content, "\n")
@@ -58,22 +56,5 @@ func getCPUusage() string {
 	// Calculate CPU usage percentage
 	usage := 100.0 * (float64(total-idle) / float64(total))
 
-	return fmt.Sprintf("%.2f%%", usage)
-}
-
-func main() {
-	for {
-	// Get CPU temperature
-	cpuTemp := getCPUtemp()
-
-	// Get CPU usage
-	cpuUsage := getCPUusage()
-
-	// Print system information
-	fmt.Println("System Information:")
-	fmt.Println("-------------------")
-	fmt.Printf("CPU Temperature: %s\n", cpuTemp)
-	fmt.Printf("CPU Usage: %s\n", cpuUsage)
-	time.Sleep(500 * time.Millisecond)
-	}
+	return usage
 }

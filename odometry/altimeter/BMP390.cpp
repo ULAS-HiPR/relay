@@ -9,7 +9,7 @@
 BMP390::BMP390(void) {
   //_meas_end = 0;
   //_filterEnabled = _tempOSEnabled = _presOSEnabled = false;
-  std::cout << "work pls";
+  std::cout << "init";
 }
 
 int g_handler = -1;
@@ -26,7 +26,6 @@ bool BMP390::begin_I2C(uint8_t addr){
 
 
   the_sensor.chip_id = addr;
-  printf("Sensor reset failed with error code: %d\n",  the_sensor.chip_id);
 
   the_sensor.intf = BMP3_I2C_INTF;
   the_sensor.read = &i2c_read;

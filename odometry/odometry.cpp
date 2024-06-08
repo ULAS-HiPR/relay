@@ -24,7 +24,7 @@ int main() {
             std::cout << "Latitude: " << gpsData.latitudeDegrees << std::endl;
             std::cout << "Longitude: " << gpsData.longitudeDegrees << std::endl;
             std::cout << "Geoid Height: " << gpsData.geoidheight << std::endl;
-            std::cout << "Altitude: " << gpsData.altitude << std::endl;
+            std::cout << "AltitudeGPS: " << gpsData.altitude << std::endl;
             std::cout << "Speed: " << gpsData.speed << std::endl;
             std::cout << "Fix Quality: " << gpsData.fixquality << std::endl;
             std::cout << "Satellites: " << gpsData.satellites << std::endl;
