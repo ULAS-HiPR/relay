@@ -29,7 +29,7 @@
 */
 /**************************************************************************/
 
-#include "GPS.h"
+#include "Ada_GPS.h"
 #include <algorithm>
 #include <cmath>
 #include <string.h>
@@ -48,7 +48,7 @@ uint32_t millis() {
     @return none
 */
 /**************************************************************************/
-void GPS::newDataValue(nmea_index_t idx, nmea_float_t v) {
+void Ada_GPS::newDataValue(nmea_index_t idx, nmea_float_t v) {
 #ifdef NMEA_EXTENSIONS
   //  Serial.println();Serial.print(idx);Serial.print(", "); Serial.println(v);
   val[idx].latest = v; // update the value
@@ -113,7 +113,7 @@ void GPS::newDataValue(nmea_index_t idx, nmea_float_t v) {
     @return   none
 */
 /**************************************************************************/
-void GPS::data_init() {
+void Ada_GPS::data_init() {
 #ifdef NMEA_EXTENSIONS
   // fill all the data values with nothing
   static char c[] = "NUL";
@@ -310,7 +310,7 @@ void GPS::data_init() {
     @return the latest NMEA value
 */
 /**************************************************************************/
-nmea_float_t GPS::get(nmea_index_t idx) {
+nmea_float_t Ada_GPS::get(nmea_index_t idx) {
   if (idx >= NMEA_MAX_INDEX || idx < NMEA_HDOP)
     return 0.0;
   return val[idx].latest;
@@ -323,7 +323,7 @@ nmea_float_t GPS::get(nmea_index_t idx) {
     @return the latest NMEA value, smoothed
 */
 /**************************************************************************/
-nmea_float_t GPS::getSmoothed(nmea_index_t idx) {
+nmea_float_t Ada_GPS::getSmoothed(nmea_index_t idx) {
   if (idx >= NMEA_MAX_INDEX || idx < NMEA_HDOP)
     return 0.0;
   return val[idx].smoothed;
@@ -344,7 +344,7 @@ nmea_float_t GPS::getSmoothed(nmea_index_t idx) {
     @return none
 */
 /**************************************************************************/
-void GPS::initDataValue(nmea_index_t idx, char *label, char *fmt,
+void Ada_GPS::initDataValue(nmea_index_t idx, char *label, char *fmt,
                                  char *unit, unsigned long response,
                                  nmea_value_type_t type) {
   if (idx < NMEA_MAX_INDEX) {
@@ -385,7 +385,7 @@ void GPS::initDataValue(nmea_index_t idx, char *label, char *fmt,
     @return pointer to the history
 */
 /**************************************************************************/
-nmea_history_t *GPS::initHistory(nmea_index_t idx, nmea_float_t scale,
+nmea_history_t *Ada_GPS::initHistory(nmea_index_t idx, nmea_float_t scale,
                                           nmea_float_t offset,
                                           unsigned historyInterval,
                                           unsigned historyN) {
@@ -426,7 +426,7 @@ nmea_history_t *GPS::initHistory(nmea_index_t idx, nmea_float_t scale,
     @return none
 */
 /**************************************************************************/
-void GPS::removeHistory(nmea_index_t idx) {
+void Ada_GPS::removeHistory(nmea_index_t idx) {
   if (idx < NMEA_MAX_INDEX) {
     if (val[idx].hist == NULL)
       return;
@@ -445,7 +445,7 @@ void GPS::removeHistory(nmea_index_t idx) {
     @return none
 */
 /**************************************************************************/
-void GPS::showDataValue(nmea_index_t idx, int n) {
+void Ada_GPS::showDataValue(nmea_index_t idx, int n) {
   char buf[256]; // Buffer for storing debug information
   snprintf(buf, sizeof(buf), "idx: %s%d, %s, %.4f, %.4f, at %lu ms, tau = %lu ms, type: %d, ockam: %d",
            (idx < 10 ? " " : ""), idx, val[idx].label, val[idx].latest, val[idx].smoothed, val[idx].lastUpdate,
@@ -503,7 +503,7 @@ void GPS::showDataValue(nmea_index_t idx, int n) {
     @return true if a compound angle requiring 3 contiguos data values.
 */
 /**************************************************************************/
-bool GPS::isCompoundAngle(nmea_index_t idx) {
+bool Ada_GPS::isCompoundAngle(nmea_index_t idx) {
   if ((int)(val[idx].type / 10) == 1) // angle with sin/cos component recording
     return true;
   return false;
@@ -518,7 +518,7 @@ bool GPS::isCompoundAngle(nmea_index_t idx) {
     @return The angle in -180 to 180 degree range.
 */
 /**************************************************************************/
-nmea_float_t GPS::boatAngle(nmea_float_t s, nmea_float_t c) {
+nmea_float_t Ada_GPS::boatAngle(nmea_float_t s, nmea_float_t c) {
   // put the sin angle in -90 to 90 range
   nmea_float_t sAng = asin(s) * (nmea_float_t)RAD_TO_DEG;
   while (sAng < -90)
@@ -559,7 +559,7 @@ nmea_float_t GPS::boatAngle(nmea_float_t s, nmea_float_t c) {
     @return The angle in 0 to 360 degree range.
 */
 /**************************************************************************/
-nmea_float_t GPS::compassAngle(nmea_float_t s, nmea_float_t c) {
+nmea_float_t Ada_GPS::compassAngle(nmea_float_t s, nmea_float_t c) {
   nmea_float_t ang = boatAngle(s, c);
   if (ang < 5000) { // if reasonable range
     while (ang < 0)

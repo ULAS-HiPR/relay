@@ -1,44 +1,22 @@
-#include "BMP390.h" // Include WiringPi library!
 #include <iostream>
-
+#include "altimeter.h"
 #include <pigpio.h>
 
-
-int main(void) {
-    // Initialize the pigpio library
-    if (gpioInitialise() >= 0) {
-        // Create an instance of the BMP390 class
-        BMP390 bmp;
-        
-        // Initialize the BMP390 sensor via I2C
-        if (bmp.begin_I2C(0x77)) {
-            // Successfully initialized BMP390 sensor
-            // Now you can perform sensor readings or other operations
-            // For example:
-            int count = 0;
-            while(count < 100){
-            float temperature = bmp.readTemperature();
-            float pressure = bmp.readPressure();
-            float altitude = bmp.readAltitude(1013.25); // Provide sea level pressure as argument
-            
-            // Print sensor readings
-            printf("Temperature: %f°C\n", temperature);
-            printf("Pressure: %.2f Pa\n", pressure);
-            printf("Altitude: %.2f meters\n", altitude);
-            count++;
-            time_sleep(1.0);
-            }
-        } else {
-            // Failed to initialize BMP390 sensor
-            printf("Failed to initialize BMP390 sensor via I2C\n");
-        }
-
-        // Close pigpio library
-        gpioTerminate();
+Altimeter::Altimeter(double sea_pressure) : bmp(), sea_pressure(sea_pressure) {
+    if (bmp.begin_I2C(0x77)) {
+        printf("start up success");
     } else {
-        // Failed to initialize pigpio library
-        printf("Failed to initialize pigpio library\n");
+        printf("Failed to initialize BMP390 sensor via I2C\n");
     }
+}
 
-    return 0;
+struct AltData Altimeter::read() {
+    struct AltData reading;
+
+    // Assuming there are functions in BMP390 class to read temperature, pressure, and altitude
+    reading.temp = bmp.readTemperature();
+    reading.pressure = bmp.readPressure();
+    reading.alt = bmp.readAltitude(sea_pressure);
+
+    return reading;
 }

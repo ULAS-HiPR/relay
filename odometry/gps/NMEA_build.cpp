@@ -22,7 +22,7 @@
 */
 /**************************************************************************/
 
-#include "GPS.h"
+#include "Ada_GPS.h"
 #include <string.h>
 
 #ifdef NMEA_EXTENSIONS
@@ -66,7 +66,7 @@
     @return Pointer to sentence if successful, NULL if fails
 */
 /**************************************************************************/
-char *GPS::build(char *nmea, const char *thisSource,
+char *Ada_GPS::build(char *nmea, const char *thisSource,
                           const char *thisSentence, char ref, bool noCRLF) {
   sprintf(nmea, "%6.2f",
           (double)123.45); // fail if sprintf() doesn't handle floats
@@ -592,7 +592,7 @@ char *GPS::build(char *nmea, const char *thisSource,
     @return none
 */
 /**************************************************************************/
-void GPS::addChecksum(char *buff) {
+void Ada_GPS::addChecksum(char *buff) {
   char cs = 0;
   int i = 1;
   while (buff[i]) {

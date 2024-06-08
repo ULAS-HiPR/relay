@@ -20,7 +20,7 @@
 */
 /**************************************************************************/
 
-#include "GPS.h"
+#include "Ada_GPS.h"
 #include <string.h>
 #include <algorithm>
 #include <pigpio.h>
@@ -52,7 +52,7 @@
     @return True if successfully parsed, false if fails check or parsing
 */
 /**************************************************************************/
-bool GPS::parse(char *nmea) {
+bool Ada_GPS::parse(char *nmea) {
   if (!check(nmea))
     return false;
   // passed the check, so there's a valid source in thisSource and a valid
@@ -562,7 +562,7 @@ bool GPS::parse(char *nmea) {
     @return True if well formed, false if it has problems
 */
 /**************************************************************************/
-bool GPS::check(char *nmea) {
+bool Ada_GPS::check(char *nmea) {
   thisCheck = 0; // new check
   *thisSentence = *thisSource = 0;
   if (*nmea != '$' && *nmea != '!')
@@ -625,7 +625,7 @@ bool GPS::check(char *nmea) {
     @return Pointer to the found token, or NULL if it fails
 */
 /**************************************************************************/
-const char *GPS::tokenOnList(char *token, const char **list) {
+const char *Ada_GPS::tokenOnList(char *token, const char **list) {
   int i = 0; // index in the list
   while (strncmp(list[i], "ZZ", 2) &&
          i < 1000) { // stop at terminator and don't crash without it
@@ -646,7 +646,7 @@ const char *GPS::tokenOnList(char *token, const char **list) {
     @return True if on the list, false if it fails check or is not on the list
 */
 /**************************************************************************/
-bool GPS::onList(char *nmea, const char **list) {
+bool Ada_GPS::onList(char *nmea, const char **list) {
   if (!check(nmea)) // sets thisSentence if valid
     return false;   // not a valid sentence
   // stop at terminator with first two letters ZZ and don't crash without it
@@ -681,7 +681,7 @@ bool GPS::onList(char *nmea, const char **list) {
     @return true if successful, false if failed or no value
 */
 /**************************************************************************/
-bool GPS::parseCoord(char *pStart, nmea_float_t *angleDegrees,
+bool Ada_GPS::parseCoord(char *pStart, nmea_float_t *angleDegrees,
                               nmea_float_t *angle, int32_t *angle_fixed,
                               char *dir) {
   char *p = pStart;
@@ -743,7 +743,7 @@ bool GPS::parseCoord(char *pStart, nmea_float_t *angleDegrees,
 }
 
 
-char *GPS::parseStr(char *buff, char *p, int n) {
+char *Ada_GPS::parseStr(char *buff, char *p, int n) {
   char *e = strchr(p, ',');
   int len = 0;
   if (e) {
@@ -772,7 +772,7 @@ char *GPS::parseStr(char *buff, char *p, int n) {
     @return true if successful, false otherwise
 */
 /**************************************************************************/
-bool GPS::parseTime(char *p) {
+bool Ada_GPS::parseTime(char *p) {
   if (!isEmpty(p)) { // get time
     uint32_t time = atol(p);
     hour = time / 10000;
@@ -797,7 +797,7 @@ bool GPS::parseTime(char *p) {
     @return True if we parsed it, false if it has invalid data
 */
 /**************************************************************************/
-bool GPS::parseFix(char *p) {
+bool Ada_GPS::parseFix(char *p) {
   if (!isEmpty(p)) {
     if (p[0] == 'A') {
       fix = true;
@@ -818,7 +818,7 @@ bool GPS::parseFix(char *p) {
     @return 3=external 2=internal 1=there was an antenna short or problem
 */
 /**************************************************************************/
-bool GPS::parseAntenna(char *p) {
+bool Ada_GPS::parseAntenna(char *p) {
   if (!isEmpty(p)) {
     if (p[0] == '3') {
       antenna = 3;
@@ -842,7 +842,7 @@ bool GPS::parseAntenna(char *p) {
     @return true if empty field, false if something there
 */
 /**************************************************************************/
-bool GPS::isEmpty(char *pStart) {
+bool Ada_GPS::isEmpty(char *pStart) {
   if (',' != *pStart && '*' != *pStart && pStart != NULL)
     return false;
   else
@@ -858,7 +858,7 @@ bool GPS::isEmpty(char *pStart) {
 */
 /**************************************************************************/
 // read a Hex value and return the decimal equivalent
-uint8_t GPS::parseHex(char c) {
+uint8_t Ada_GPS::parseHex(char c) {
   if (c < '0')
     return 0;
   if (c <= '9')
