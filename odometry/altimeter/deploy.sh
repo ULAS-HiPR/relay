@@ -1,2 +1,2 @@
-g++ altimeter.cpp BMP390.cpp bmp3.c -o altimeter -lpigpio -lrt -lpthread
+g++ altimeter.cpp ../../lib/altimeter/BMP390.cpp ../../lib/altimeter/bmp3.c -o altimeter -lpigpio -lrt -lpthread
 sudo ./altimeter

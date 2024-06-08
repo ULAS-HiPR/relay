@@ -1,2 +1,2 @@
-g++ gps.cpp GPS.cpp NMEA_build.cpp NMEA_data.cpp NMEA_parse.cpp -o gpsProgram -lpigpio -lrt -lpthread
-sudo ./gpsProgram 
+g++ GPS.cpp ../../lib/gps/Ada_GPS.cpp ../../lib/gps/NMEA_build.cpp ../../lib/gps/NMEA_data.cpp ../../lib/gps/NMEA_parse.cpp -o gpsProgram -lpigpio -lrt -lpthread
+sudo ./gps

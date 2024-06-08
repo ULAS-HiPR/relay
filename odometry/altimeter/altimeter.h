@@ -1,7 +1,7 @@
 #define __BMP3XX_H__
 
-#include "bmp3.h"
-#include "BMP390.h"
+#include "../../lib/altimeter/bmp3.h"
+#include "../../lib/altimeter/BMP390.h"
 #define BMP3XX_DEFAULT_ADDRESS (0x77) 
 
 class Altimeter{

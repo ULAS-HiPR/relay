@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unistd.h> 
 #include <iomanip>
-#include "Ada_GPS.h"
+#include "../../lib/gps/Ada_GPS.h"
 
 class GPS{
 public:

@@ -77,7 +77,7 @@ func readOdometry(cmd *exec.Cmd, odometryCh chan<- OdometryData) {
 		} else if strings.HasPrefix(line, "Geoid Height:") {
 			fmt.Sscanf(line, "Geoid Height: %f", &gpsData.GeoidHeight)
 		} else if strings.HasPrefix(line, "AltitudeGPS:") {
-			fmt.Sscanf(line, "Altitude: %f", &gpsData.GPSAltitude)
+			fmt.Sscanf(line, "AltitudeGPS: %f", &gpsData.GPSAltitude)
 		} else if strings.HasPrefix(line, "Speed:") {
 			fmt.Sscanf(line, "Speed: %f", &gpsData.Speed)
 		} else if strings.HasPrefix(line, "Fix Quality:") {
@@ -86,21 +86,12 @@ func readOdometry(cmd *exec.Cmd, odometryCh chan<- OdometryData) {
 			fmt.Sscanf(line, "Satellites: %d", &gpsData.Satellites)
 		}
 
+		//might but a if gps true & satalite 0, reset, cause than happens sometimes? (on c side tho??)
 		if altitudeReceived && gpsReceived {
 			odometryCh <- OdometryData{AltData: altitudeData, GpsData: gpsData}
 			altitudeReceived, gpsReceived = false, false
 		}
 	}
-}
-
-
-func processSensorData(output string, radioChan chan<- string) {
-	// Process sensor data and prepare radio data
-	// For demonstration, let's just concatenate sensor data
-	radioData := "Processed data: " + output
-
-	// Send radio data to radio sensor
-	radioChan <- radioData
 }
 
 func sendToRadio(ch <-chan Data) {
@@ -115,38 +106,36 @@ func sendToRadio(ch <-chan Data) {
 	}
 }
 
-
 func piStats(ch chan<- healthData) {
 	for {
 	cpuTemp := Health.GetCPUtemp()
 	cpuUsage := Health.GetCPUusage()
 	ch <- healthData{usage: cpuUsage, temp: cpuTemp}
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	}
 }
 
 func main() {
+	//starts gps & altimeter c++ code
 	odometryCmd := exec.Command("sudo", "./odometry/odometryMain")
 
-	// Launch goroutine to read output from the C program
+	//every channel is 1 length so I can use len() to see if its full or not
 	healthOutputChan := make(chan healthData, 1)
-	//altitudeCh := make(chan AltitudeData, 1)
-	//gpsCh := make(chan GPSData, 1)
 	odometryCh := make(chan OdometryData, 1)
 	combinedCh := make(chan Data, 1)
 
+	// starts reading in values from c++ code (cmd line)
 	go readOdometry(odometryCmd, odometryCh)
+	// starts getting pi health stats
 	go piStats(healthOutputChan)
 	go sendToRadio(combinedCh)
 
-
-	// Wait for the readOutput goroutines to finish
 	for{
+		//sends data to sensors when ever piece of data is ready 
+		//time limited by c code (every 0.5s once gps )
 		if (len(healthOutputChan) == 1 && len(odometryCh) == 1) {
 			combinedCh <- Data{health: <-healthOutputChan , odo: <-odometryCh}
 		}
-		time.Sleep(500*time.Millisecond)
 	}
-
 }
 

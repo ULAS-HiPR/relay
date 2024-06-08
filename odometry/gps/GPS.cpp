@@ -27,7 +27,6 @@ struct GpsData GPS::read() {
 
     if (gps.fix){
     gpsData.fix = true;
-    // Assuming there are functions in Ada_GPS class to read latitude, longitude, altitude, etc.
     gpsData.latitudeDegrees = gps.latitudeDegrees;
     gpsData.longitudeDegrees = gps.longitudeDegrees;
     gpsData.geoidheight = gps.geoidheight;

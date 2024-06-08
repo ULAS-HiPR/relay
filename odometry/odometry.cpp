@@ -21,8 +21,10 @@ int main() {
 
         if (gpsData.fix) {
             std::cout << "Fix: Yes" << std::endl;
+            std::cout << std::fixed << std::setprecision(6);
             std::cout << "Latitude: " << gpsData.latitudeDegrees << std::endl;
             std::cout << "Longitude: " << gpsData.longitudeDegrees << std::endl;
+            std::cout << std::fixed << std::setprecision(2);
             std::cout << "Geoid Height: " << gpsData.geoidheight << std::endl;
             std::cout << "AltitudeGPS: " << gpsData.altitude << std::endl;
             std::cout << "Speed: " << gpsData.speed << std::endl;

@@ -8,7 +8,9 @@ _gopath/
 
 #C++
 BMP390
+*.o
 altimeter
+
 
 # Images
 *.jpg
