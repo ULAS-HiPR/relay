@@ -12,8 +12,6 @@ Altimeter::Altimeter(double sea_pressure) : bmp(), sea_pressure(sea_pressure) {
 
 struct AltData Altimeter::read() {
     struct AltData reading;
-
-    // Assuming there are functions in BMP390 class to read temperature, pressure, and altitude
     reading.temp = bmp.readTemperature();
     reading.pressure = bmp.readPressure();
     reading.alt = bmp.readAltitude(sea_pressure);

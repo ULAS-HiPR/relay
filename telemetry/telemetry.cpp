@@ -1,7 +1,6 @@
 #define BOARD_LORASPI
 #include "telemetry.h"
 
-
 sendingData parseData(const std::string& input) {
     std::istringstream iss(input);
     std::string line;

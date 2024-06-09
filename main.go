@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os/exec"
-	"io"
 	"time"
 	Health "./lib"
 	"strings"
@@ -114,24 +113,20 @@ func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
 		return
 	}
 
-	// Create a pipe for the standard output of the C++ program
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		fmt.Println("Error creating stdout pipe:", err)
 		return
 	}
 
-	// Start the C++ program
 	err = cmd.Start()
 	if err != nil {
 		fmt.Println("Error starting command:", err)
 		return
 	}
 
-	// Create a scanner to read from the standard output of the C++ program
+	//reader
 	scanner := bufio.NewScanner(stdout)
-
-	// Read lines from the C++ program's output and print them
 	go func() {
 		for scanner.Scan() {
 			fmt.Println("scanning:")
@@ -139,11 +134,8 @@ func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
 		}
 	}()
 
-	// Create a writer to write to the standard input of the C++ program
+	//writer
 	writer := bufio.NewWriter(stdin)
-
-	// Write input to the C++ program
-	
     for {
 		select {
 		case data := <-ch:
@@ -159,8 +151,8 @@ func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
-//
-   // // Wait for the command to finish and get its return status
+
+	//will never happen prob
     if err := cmd.Wait(); err != nil {
         fmt.Println("Command finished with error:", err)
     }
@@ -177,7 +169,6 @@ func piStats(ch chan<- healthData) {
 }
 
 func main() {
-	//starts gps & altimeter c++ code
 	odometryCmd := exec.Command("sudo", "./odometry/odometryMain")
 	telemetryCmd := exec.Command("sudo", "./telemetry/telemetryMain")
 
@@ -194,21 +185,9 @@ func main() {
 
 	for{
 		//sends data to sensors when ever piece of data is ready 
-		//time limited by c code (every 0.5s once gps )
+		//time limited by c code and sendtoradio func (every 0.5s once gps )
 		if (len(healthOutputChan) == 1 && len(odometryCh) == 1) {
 			combinedCh <- Data{health: <-healthOutputChan , odo: <-odometryCh}
 		}
 	}
-}
-
-
-// Function to read and print the output from the command
-func printOutput(pr *io.PipeReader) {
-scanner := bufio.NewScanner(pr)
-for scanner.Scan() {
-	fmt.Println("telemetryMain output:", scanner.Text())
-}
-if err := scanner.Err(); err != nil {
-	fmt.Printf("Error reading output from command: %v\n", err)
-}
 }

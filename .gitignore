@@ -10,6 +10,8 @@ _gopath/
 BMP390
 *.o
 altimeter
+telemetryMain
+odometryMain
 
 
 # Images

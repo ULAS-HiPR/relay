@@ -13,8 +13,6 @@ private:
     double sea_pressure;
 };
 
-
-
 struct AltData {
     double temp;
     double pressure;
