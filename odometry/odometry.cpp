@@ -30,10 +30,10 @@ int main() {
             std::cout << "Speed: " << gpsData.speed << std::endl;
             std::cout << "Fix Quality: " << gpsData.fixquality << std::endl;
             std::cout << "Satellites: " << gpsData.satellites << std::endl;
-            usleep(500000);
+            usleep(10000);
         } else {
           std::cout << "Fix: No" << std::endl;
-          usleep(50000);
+          usleep(10000);
         }
         std::cout<< u8"\033[2J\033[1;1H"; 
     }

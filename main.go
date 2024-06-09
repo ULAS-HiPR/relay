@@ -149,7 +149,7 @@ func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
 			}
 			writer.Flush()
 		}
-		time.Sleep(500 * time.Millisecond)
+		//time.Sleep(100 * time.Millisecond)
 	}
 
 	//will never happen prob

@@ -22,6 +22,3 @@ public:
 private:
   RH_RF95 rf95;
 };
-
-std::string serializeSendingDataToJsonLike(const sendingData& data);
-void jsonLikeToUint8Array(const std::string& jsonString, uint8_t* buffer);
