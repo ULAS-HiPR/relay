@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os/exec"
+	"io"
 	"time"
 	Health "./lib"
 	"strings"
@@ -39,6 +40,18 @@ type healthData struct {
 type Data struct {
 	health healthData
 	odo OdometryData
+}
+
+func (a AltitudeData) String() string {
+	return fmt.Sprintf("{%.4f %.4f %.4f}", a.Temperature, a.Pressure, a.Altitude)
+}
+
+func (g GPSData) String() string {
+	return fmt.Sprintf("{%t %.6f %.6f %.4f %.4f %d}", g.Fix, g.Latitude, g.Longitude, g.GPSAltitude, g.Speed, g.Satellites)
+}
+
+func (h healthData) String() string {
+	return fmt.Sprintf("{%.4f %.4f}", h.usage, h.temp)
 }
 
 func readOdometry(cmd *exec.Cmd, odometryCh chan<- OdometryData) {
@@ -94,17 +107,65 @@ func readOdometry(cmd *exec.Cmd, odometryCh chan<- OdometryData) {
 	}
 }
 
-func sendToRadio(ch <-chan Data) {
-	for {
+func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
+    stdin, err := cmd.StdinPipe()
+	if err != nil {
+		fmt.Println("Error creating stdin pipe:", err)
+		return
+	}
+
+	// Create a pipe for the standard output of the C++ program
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Println("Error creating stdout pipe:", err)
+		return
+	}
+
+	// Start the C++ program
+	err = cmd.Start()
+	if err != nil {
+		fmt.Println("Error starting command:", err)
+		return
+	}
+
+	// Create a scanner to read from the standard output of the C++ program
+	scanner := bufio.NewScanner(stdout)
+
+	// Read lines from the C++ program's output and print them
+	go func() {
+		for scanner.Scan() {
+			fmt.Println("scanning:")
+			fmt.Println(scanner.Text())
+		}
+	}()
+
+	// Create a writer to write to the standard input of the C++ program
+	writer := bufio.NewWriter(stdin)
+
+	// Write input to the C++ program
+	
+    for {
 		select {
 		case data := <-ch:
-			fmt.Println("Sending Data:")
-			fmt.Println("Health:", data.health)
-			fmt.Println("Altitude:", data.odo.AltData)
-			fmt.Println("GPS:", data.odo.GpsData)
+			input := fmt.Sprintf("<\nHealth:%v\nAltitude:%v\nGPS:%v\n>\n",
+				data.health, data.odo.AltData, data.odo.GpsData)
+			fmt.Println(input)
+			_, err = writer.WriteString(input)
+			if err != nil {
+				fmt.Println("Error writing to stdin:", err)
+				return
+			}
+			writer.Flush()
 		}
+		time.Sleep(500 * time.Millisecond)
 	}
+//
+   // // Wait for the command to finish and get its return status
+    if err := cmd.Wait(); err != nil {
+        fmt.Println("Command finished with error:", err)
+    }
 }
+
 
 func piStats(ch chan<- healthData) {
 	for {
@@ -118,6 +179,7 @@ func piStats(ch chan<- healthData) {
 func main() {
 	//starts gps & altimeter c++ code
 	odometryCmd := exec.Command("sudo", "./odometry/odometryMain")
+	telemetryCmd := exec.Command("sudo", "./telemetry/telemetryMain")
 
 	//every channel is 1 length so I can use len() to see if its full or not
 	healthOutputChan := make(chan healthData, 1)
@@ -128,7 +190,7 @@ func main() {
 	go readOdometry(odometryCmd, odometryCh)
 	// starts getting pi health stats
 	go piStats(healthOutputChan)
-	go sendToRadio(combinedCh)
+	go sendToRadio(telemetryCmd, combinedCh)
 
 	for{
 		//sends data to sensors when ever piece of data is ready 
@@ -139,3 +201,14 @@ func main() {
 	}
 }
 
+
+// Function to read and print the output from the command
+func printOutput(pr *io.PipeReader) {
+scanner := bufio.NewScanner(pr)
+for scanner.Scan() {
+	fmt.Println("telemetryMain output:", scanner.Text())
+}
+if err := scanner.Err(); err != nil {
+	fmt.Printf("Error reading output from command: %v\n", err)
+}
+}

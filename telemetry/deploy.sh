@@ -1,1 +1,2 @@
-sudo ./rf95
+make
+sudo ./telemetryMain

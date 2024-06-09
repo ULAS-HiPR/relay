@@ -9,7 +9,7 @@ LIBS          = -lbcm2835
 RADIOHEADBASE = ../lib/telemetry
 INCLUDE       = -I$(RADIOHEADBASE)
 
-all: rf95
+all: telemetry
 
 RasPi.o: $(RADIOHEADBASE)/RasPi.cpp
 				$(CC) $(CFLAGS) -c $(RADIOHEADBASE)/RasPi.cpp $(INCLUDE)
@@ -35,8 +35,11 @@ RHGenericDriver.o: $(RADIOHEADBASE)/RHGenericDriver.cpp
 RHGenericSPI.o: $(RADIOHEADBASE)/RHGenericSPI.cpp
 				$(CC) $(CFLAGS) -c $(INCLUDE) $<
 
-rf95: rf95.o RH_RF95.o RasPi.o RHHardwareSPI.o RHGenericDriver.o RHGenericSPI.o RHSPIDriver.o
-				$(CC) $^ $(LIBS) -o rf95
+telemetry.o: telemetry.cpp
+				$(CC) $(CFLAGS) -c $(INCLUDE) $<	
+
+telemetry: telemetry.o rf95.o RH_RF95.o RasPi.o RHHardwareSPI.o RHGenericDriver.o RHGenericSPI.o RHSPIDriver.o
+				$(CC) $^ $(LIBS) -o telemetryMain
 
 clean:
-				rm -rf *.o rf95
+				rm -rf *.o telemetry

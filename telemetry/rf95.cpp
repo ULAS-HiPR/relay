@@ -16,6 +16,7 @@
 #include "rf95.h"
 #include "../lib/telemetry/RasPi.h"
 
+
 // Our RFM95 Configuration 
 #define RF_FREQUENCY  434.00
 #define RF_GATEWAY_ID 1 
@@ -58,24 +59,59 @@ Radio::Radio() : rf95(RF_CS_PIN, RF_IRQ_PIN){
 };
     //Begin the main body of code
 
-void Radio::send(struct Data){
-  //format data to string
-  uint8_t data[] = "Hi Raspi!";
-  uint8_t len = sizeof(data);
-        
-  printf("Sending %02d bytes to node #%d => ", len, RF_GATEWAY_ID );
-  printbuffer(data, len);
-  printf("\n" );
-  rf95.send(data, len);
-  rf95.waitPacketSent();
-  bcm2835_delay(100);
-};
+void Radio::send(const sendingData& data) {
+    std::string jsonString = serializeSendingDataToJsonLike(data);
+    //std::cout << jsonString;
 
-int main(void){
-  Radio rf;
+    std::size_t bufferSize = jsonString.size();
+    uint8_t* buffer = new uint8_t[bufferSize + 1];  // Allocate one extra byte for the null terminator
+    
+    jsonLikeToUint8Array(jsonString, buffer);
+    buffer[bufferSize] = '\0';  // Ensure the buffer is null-terminated
 
-  struct Data data;
-  data.alt = 10.1;
-  data.gps = 1.1;
-  rf.send(data);
-};
+    printf("Sending %02zu bytes to node #%d => ", bufferSize, RF_GATEWAY_ID);
+    //printbuffer(buffer, bufferSize);
+    printf("\n");
+
+    rf95.send(buffer, bufferSize);
+    rf95.waitPacketSent();
+    bcm2835_delay(100);
+
+    delete[] buffer;
+}
+
+void Radio::printbuffer(const uint8_t* buffer, std::size_t len) {
+    for (std::size_t i = 0; i < len; ++i) {
+        printf("%02x ", buffer[i]);
+    }
+}
+
+std::string serializeSendingDataToJsonLike(const sendingData& data) {
+    std::ostringstream oss;
+    oss << "{ "
+        << "alt:{"
+        << "temp:" << data.altData.temperature << ","
+        << "pres:" << data.altData.pressure << ","
+        << "alt:" << data.altData.altitude
+        << "},"
+        << "gps:{"
+        << "fix:" << (data.gpsData.fix ? "true" : "false") << ","
+        << "lat:" << data.gpsData.lat << ","
+        << "lon:" << data.gpsData.lon << ","
+        << "alt:" << data.gpsData.altitude << ","
+        << "spe:" << data.gpsData.speed << ","
+        << "sat:" << data.gpsData.satellites
+        << "},"
+        << "dev:{"
+        << "use:" << data.deviceData.usage << ","
+        << "temp:" << data.deviceData.temperature
+        << "},"
+        << "agri:{"
+        << "}"
+        << "}";
+    return oss.str();
+}
+
+void jsonLikeToUint8Array(const std::string& jsonString, uint8_t* buffer) {
+    std::memcpy(buffer, jsonString.c_str(), jsonString.size());
+}
