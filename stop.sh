@@ -1,8 +1,10 @@
 #!/bin/bash
 
 services=(
-    "camera"
-    "agrinet"
+    "ASCamera"
+    "ASAgriNet"
+    "ASTelemetry"
+    "ASOdometry"
 )
 
 for service in "${services[@]}"; do
