@@ -1,20 +1,19 @@
 #!/bin/bash
-PROGRAM_NAME="ASCamera"
-SOURCE_DIR="/home/agrisat/relay/camera"
+PROGRAM_NAME="ASTelemetry"
+SOURCE_DIR="/home/agrisat/relay/telemetry"
 SERVICE_DIR="/etc/systemd/system"
-GO_BINARY="/usr/local/bin/camera"
-GO_PROGRAM="$SOURCE_DIR/main.go"
+BINARY="telemetryMain"
 
-go build -o $GO_BINARY $GO_PROGRAM
+make
 
 sudo tee "$SERVICE_DIR/$PROGRAM_NAME.service" > /dev/null << EOF
 [Unit]
-Description=AgriSat Camera Service
+Description=AgriSat Telemetry Service
 After=network.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=$GO_BINARY
+ExecStart=$SOURCE_DIR/$BINARY
 [Install]
 WantedBy=multi-user.target
 EOF

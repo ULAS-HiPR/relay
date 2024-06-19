@@ -1,6 +1,11 @@
 #!/bin/bash
 
-folders=("camera" "agrinet")
+folders=(
+    "camera"
+    "agrinet"
+    "telemetry"
+    "odometry"
+)
 
 for folder in "${folders[@]}"
 do 
