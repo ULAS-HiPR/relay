@@ -30,7 +30,8 @@ int main() {
             std::cout << "Speed: " << gpsData.speed << std::endl;
             std::cout << "Fix Quality: " << gpsData.fixquality << std::endl;
             std::cout << "Satellites: " << gpsData.satellites << std::endl;
-            usleep(10000);
+            //rate limiting
+            usleep(500000);
         } else {
           std::cout << "Fix: No" << std::endl;
           usleep(10000);

@@ -2,10 +2,11 @@
 
 #include "rf95.h"
 #include "../lib/telemetry/RasPi.h"
+#include <iomanip>
 
 
 #define RF_FREQUENCY  433.00
-#define RF_GATEWAY_ID 1 
+#define RF_GATEWAY_ID 255
 #define RF_NODE_ID    10
 
 Radio::Radio() : rf95(RF_CS_PIN, RF_IRQ_PIN){
@@ -44,18 +45,16 @@ Radio::Radio() : rf95(RF_CS_PIN, RF_IRQ_PIN){
   
 };
 
-void Radio::send(const sendingData& datas) {
-    //uint8_t buffer[sizeof(sendingData)];
-    //memcpy(buffer, &data, sizeof(sendingData));
-    //uint8_t bufferSize = sizeof(buffer);
-    uint8_t data[] = "Hi Raspi!";
-    uint8_t len = sizeof(data);
+void Radio::send(std::string data) {
+    size_t len = data.size();
+    uint8_t byteArray[len];
+    
+    std::memcpy(byteArray, data.c_str(), len);
     printf("Sending %02zu bytes to node #%d => ", len, RF_GATEWAY_ID);
-    printbuffer(data, len);
+    printbuffer(byteArray, len);
     printf("\n");
 
-    rf95.send(data, len);
-    rf95.waitPacketSent();
+    rf95.send(byteArray, len);
     bcm2835_delay(100);
 
 };

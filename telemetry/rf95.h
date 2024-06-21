@@ -17,7 +17,7 @@
 class Radio{
 public:
   Radio();
-  void send(const sendingData& data);
+  void send(std::string data);
   void printbuffer(const uint8_t* buffer, std::size_t len);
 private:
   RH_RF95 rf95;

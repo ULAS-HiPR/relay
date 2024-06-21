@@ -3,6 +3,7 @@
 #include <iostream>
 #include <unistd.h> 
 #include <iomanip>
+#include <fstream>
 
 GPS::GPS(const std::string &serialPort) : gps(serialPort), port(serialPort) {
     if (!gps.begin(9600)) {
@@ -37,5 +38,16 @@ struct GpsData GPS::read() {
     }else{
         gpsData.fix = false;
     }
+
+    struct GpsData gpsDataToWrite = gpsData;
+    std::time_t currentTime = std::time(nullptr);
+    std::tm* localTime = std::localtime(&currentTime);
+    char timeString[100];
+    std::strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", localTime);
+
+    std::ofstream gpsDataFile("gps.csv",std::ios::app);
+    gpsDataFile << timeString << "," << gpsDataToWrite.fix << "," <<gpsDataToWrite.latitudeDegrees << "," <<gpsDataToWrite.longitudeDegrees << "," << gpsDataToWrite.geoidheight<< "," << gpsDataToWrite.altitude<< "," << gpsDataToWrite.speed << "," << gpsDataToWrite.fixquality << "," <<  gpsDataToWrite.satellites << std::endl;
+    gpsDataFile.close();
+
     return gpsData;
 }
