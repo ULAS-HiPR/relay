@@ -50,7 +50,7 @@ class ImageHandler(FileSystemEventHandler):
 
 
 def main():
-    logger = LogManager.get_logger("AGRINET INFERENCE")
+    logger = LogManager.get_logger("agrinet")
     logger.info("Warming up...")
 
     generator = Generator()

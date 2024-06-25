@@ -6,6 +6,8 @@ AgriNet is a service running the NVIDIA Pix2Pix model against the nirscene0x dat
 
 AgriNet is a python package and runs as a PyInstaller executable. The service is deployed via a shell script that will copy the necessary dependencies (single binary) and start the service.
 
+*Note: deploy the service on code change as it will not auto-reload.*
+
 ```bash
 pip install -r requirements.txt
 
