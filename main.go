@@ -98,7 +98,6 @@ func readOdometry(cmd *exec.Cmd, odometryCh chan<- OdometryData) {
 			fmt.Sscanf(line, "Satellites: %d", &gpsData.Satellites)
 		}
 
-		//might but a if gps true & satalite 0, reset, cause than happens sometimes? (on c side tho??)
 		if altitudeReceived && gpsReceived {
 			odometryCh <- OdometryData{AltData: altitudeData, GpsData: gpsData}
 			altitudeReceived, gpsReceived = false, false
@@ -149,7 +148,8 @@ func sendToRadio(cmd *exec.Cmd, ch <-chan Data) {
 			}
 			writer.Flush()
 		}
-		//time.Sleep(100 * time.Millisecond)
+		//rate limiting
+		time.Sleep(200 * time.Millisecond)
 	}
 
 	//will never happen prob
