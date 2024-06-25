@@ -17,10 +17,16 @@ cd relay
 
 ## Usage
 
+Below is the shotgun approach to deploying all services. For individual service deployment, see the service READMEs.
+
 ```bash
+chmod +x ./deploy.sh 
 ./deploy.sh # Deploy and start all services
+
+chmod +x ./quit.sh
 ./quit.sh # Stop all services
 ```
+
 
 ## Services
 

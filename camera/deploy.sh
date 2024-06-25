@@ -14,8 +14,9 @@ echo "Service executable permissions set"
 rm -rf $OUTPUT_DIR/*
 echo "Output directory cleaned"
 
-# Copy the script as a bin file
-cp $SOURCE_DIR/$EXECUTABLE /usr/local/bin/$EXECUTABLE
+# Symlink the bash script camera.sh to /usr/bin/sat_camera
+ln -s $SOURCE_DIR/"camera.sh" /usr/bin/$EXECUTABLE
+echo "Service symlinked to /usr/bin/$EXECUTABLE"
 
 echo "Starting $EXECUTABLE service..."
 $EXECUTABLE

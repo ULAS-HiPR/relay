@@ -1,6 +1,6 @@
 # camera
 
-Camera is a service running the libcamera library to capture images from a HQ Raspberry Pi FishEye camera and save them to disk. These images are watched by the agrinet service to generate synthetic NIR images from them.
+Camera is a service running the libcamera library to capture images from a HQ Raspberry Pi FishEye camera and save them to disk. These images are watched by the agrinet service to generate synthetic NIR images from them. Its a bash script symlinked to `/usr/bin/sat_camera` for easy access.
 
 ## Installation
 
