@@ -19,6 +19,7 @@ odometryMain
 *.jpg
 *.jpeg
 *.png
+!cansat.png
 *.gif
 *.bmp
 *.tiff
