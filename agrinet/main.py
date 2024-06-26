@@ -4,7 +4,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from utils.LogManager import LogManager
 from utils.Model import Generator
-from utils.DataLoader import load_single, save_result
+from utils.DataLoader import load_single, save_result, save_indices_csv
 from utils.EnviroIndices import parse_indices
 
 WATCH_DIR = "/home/agrisat/relay/results/camera"
@@ -44,13 +44,22 @@ class ImageHandler(FileSystemEventHandler):
             ndvi_regions = ndvi_regions * 255
             ndwi_regions = ndwi_regions * 255
             save_result(ndvi_regions, ndwi_regions, f"{OUTPUT_DIR}/{stamp}/regions.jpg")
+
+            mean_ndvi, mean_ndwi = np.mean(ndvi_regions), np.mean(ndwi_regions)
+            save_indices_csv(
+                mean_ndvi,
+                mean_ndwi,
+                stamp,
+                "/home/agrisat/relay/results/agrinet.csv",
+            )
+
             self.logger.info("Regions saved")
         except Exception as e:
             self.logger.error(f"Error processing image: {e}")
 
 
 def main():
-    logger = LogManager.get_logger("AGRINET INFERENCE")
+    logger = LogManager.get_logger("agrinet")
     logger.info("Warming up...")
 
     generator = Generator()
