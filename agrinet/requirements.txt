@@ -1,4 +1,5 @@
 absl-py==2.1.0
+altgraph==0.17.4
 astunparse==1.6.3
 certifi==2024.6.2
 charset-normalizer==3.3.2
@@ -11,6 +12,7 @@ h5py==3.11.0
 idna==3.7
 keras==3.4.0
 libclang==18.1.1
+macholib==1.16.3
 Markdown==3.6
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
@@ -23,6 +25,8 @@ optree==0.11.0
 packaging==24.1
 protobuf==4.25.3
 Pygments==2.18.0
+pyinstaller==6.8.0
+pyinstaller-hooks-contrib==2024.7
 requests==2.32.3
 rich==13.7.1
 six==1.16.0

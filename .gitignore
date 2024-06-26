@@ -39,3 +39,8 @@ Thumbs.db
 
 
 *.h5
+
+# build specific
+agrinet/build
+agrinet/dist
+sat_agrinet.spec
