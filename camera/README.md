@@ -16,7 +16,9 @@ chmod +x ./deploy.sh
 ## Usage
 
 ```bash
-sat_camera # Start the service
+chmod +x ./sat_camera.sh
+./sat_camera.sh # Start the service (auto start on deploy)
+
 killall sat_camera # Stop the service
 ```
 

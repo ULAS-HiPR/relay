@@ -18,7 +18,9 @@ chmod +x ./deploy.sh
 ## Usage
 
 ```bash
-sat_agrinet # Start the service
+chmod +x ./sat_agrinet
+./sat_agrinet # Start the service
+
 killall sat_agrinet # Stop the service
 ```
 
