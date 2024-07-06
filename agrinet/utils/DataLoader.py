@@ -1,4 +1,5 @@
 import tensorflow as tf
+import os
 
 IMG_WIDTH = 256
 IMG_HEIGHT = 256
@@ -105,3 +106,12 @@ def load_image_test(image_file):
     input_image, real_image = normalize(input_image, real_image)
 
     return input_image, real_image
+
+
+def save_indices_csv(mean_ndvi, mean_ndwi, timestamp, path):
+    if not os.path.exists(path):
+        with open(path, "w") as f:
+            f.write("timestamp,mean_ndvi,mean_ndwi\n")
+
+    with open(path, "a") as f:
+        f.write(f"{timestamp},{mean_ndvi},{mean_ndwi}\n")

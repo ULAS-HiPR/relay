@@ -1,23 +1,20 @@
 #!/bin/bash
 
-PROGRAM_NAME="ASAgriNet"
-SOURCE_DIR="/home/agrisat/relay/agrinet"
+# Name of the service
+EXECUTABLE="sat_agrinet"
+echo "Deploying $EXECUTABLE service..."
 
-SERVICE_DIR="/etc/systemd/system"
+# Service location (where this script is located)
+SOURCE_DIR="/Users/adambyrne/Code/relay/agrinet"
+OUTPUT_DIR="/Users/adambyrne/Code/relay/results/agrinet"
 
-sudo tee "$SERVICE_DIR/$PROGRAM_NAME.service" > /dev/null << EOF
-[Unit]
-Description=AgriSat AgriNet Service
-After=network.target
-[Service]
-Type=simple
-Restart=always
-ExecStart=python $SOURCE_DIR/main.py
-[Install]
-WantedBy=multi-user.target
-EOF
+# create and move so it can be run from anywhere
+pyinstaller --onefile --name $EXECUTABLE --paths=. --add-data "utils:utils" $SOURCE_DIR/main.py
+echo $EXECUTABLE "built"
 
-sudo systemctl daemon-reload
-sudo systemctl enable "$PROGRAM_NAME.service"
-sudo systemctl start "$PROGRAM_NAME.service"
-sudo systemctl status "$PROGRAM_NAME.service"
+# wipe the contents of the output directory
+rm -rf $OUTPUT_DIR/*
+
+echo "Starting $EXECUTABLE service..."
+./"$EXECUTABLE"
+

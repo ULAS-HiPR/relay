@@ -1,28 +1,38 @@
 # relay
 
-A lightweight approach to a distributed processing chain for a CanSat mission using the [Raspberry Pi 4B](https://www.raspberrypi.org/) and an array of sensors for data collection and agricultural monitoring.
+<div>
+    <div style="float:left;">
+        <img src="cansat.png" width="100" style="text-wrap: none;" alt="CanSat Render"/>
+    </div>
+    An MVP for a processing chain to enable multi sensor acquisition and multi actuator control on a robotic system. Services are currently built around the MAch24 competition use case running an agricultural monitoring system via a Raspberry Pi HQ camera and a Pix2Pix CGAN model to transform RGB images to NIR images for NDVI and NDWI analysis for crop health monitoring along with telemetry and odometry requirements for safe and legal high powered rocket flight as a CanSat component.
+</div>
+
+
+## Installation
+
+```bash
+git clone https://github.com/ULAS-HIPR/relay.git 
+cd relay
+```
+
+## Usage
+
+Below is the shotgun approach to deploying all services. For individual service deployment, see the service READMEs.
+
+```bash
+chmod +x ./deploy.sh 
+./deploy.sh # Deploy and start all services
+
+chmod +x ./quit.sh
+./quit.sh # Stop all services
+```
+
 
 ## Services
 
-Exploiting the built-in systemd service manager, relay uses `.service` files to orchestrate the execution of them, handle dependencies and restart them in case of failure. The services are:
-
-| Service | Description | Stack |
-| --- | --- | --- |
-| `agrinet/` | Inference on camera images using Pix2Pix to generate NIR from RGB | Python, TensorFlow |
-| `camera/` | Script to take and save still images on a ticker | Go, libcamera |
-| `telemetry/` | Communication with the ground station using a LoRa module | Python, RPi.GPIO |
-| `odometry/` | Data collection (altitude, temperature, pressure, gps) | Python, RPi.GPIO |
-
-## Data
-
-All recorded data is persisted in the `results` directory under a subdir named after the service that generated it. 
-If using File IO like in camera, spin off those in goroutines so pictures can be taken every second regardless.
-
-## Deployment
-
-To deploy the services, run the following commands:
-
-```sh
-chmod +x deploy.sh
-./deploy.sh # runs each services' ./deploy.sh script
-```
+| Name | Docs | Description | Tools | Status |
+|------|---------|-------------|--------|--------|
+| sat_agrinet | [agrinet](agrinet/README.md) | CGAN Inference for NIR -> RGB Synthetic Image Generation | Python, PyInstaller | Ready for Test |
+| sat_camera | [camera](camera/README.md) | Camera Capture and Image Storage | Bash, libcamera | Ready for Test |
+| sat_telemetry | ... | ... | C++, Make g++ | Unsupported |
+| sat_odometry | ... | ... | C++, Make, g++ | Unsupported |

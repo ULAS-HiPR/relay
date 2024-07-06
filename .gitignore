@@ -1,6 +1,7 @@
 # Python
 *.pyc
 __pycache__/
+venv
 
 # Go
 *.go
@@ -18,6 +19,7 @@ odometryMain
 *.jpg
 *.jpeg
 *.png
+!cansat.png
 *.gif
 *.bmp
 *.tiff
@@ -37,3 +39,8 @@ Thumbs.db
 
 
 *.h5
+
+# build specific
+agrinet/build
+agrinet/dist
+sat_agrinet.spec
