@@ -39,6 +39,7 @@
 /*! @file bmp3.c
  * @brief Sensor driver for BMP3 sensor */
 #include "bmp3.h"
+
 /***************** Static function declarations ******************************/
 
 /*!
@@ -2224,7 +2225,6 @@ static void parse_sensor_data(const uint8_t *reg_data, struct bmp3_uncomp_data *
     data_lsb = (uint32_t)reg_data[1] << 8;
     data_msb = (uint32_t)reg_data[2] << 16;
     uncomp_data->pressure = data_msb | data_lsb | data_xlsb;
-
     /* Store the parsed register values for temperature data */
     data_xlsb = (uint32_t)reg_data[3];
     data_lsb = (uint32_t)reg_data[4] << 8;

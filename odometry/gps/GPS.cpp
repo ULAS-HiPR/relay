@@ -15,11 +15,9 @@ GPS::GPS(const std::string &serialPort) : gps(serialPort), port(serialPort) {
 }
 
 struct GpsData GPS::read() {
-    std::cout << "trying to read" << std::endl;
     struct GpsData gpsData;
 
     char c = gps.read();
-    std::cout << "did gps.read" << std::endl;
     // if a sentence is received, parse it
     if (gps.newNMEAreceived()) {
         if (!gps.parse(gps.lastNMEA())) {
@@ -28,6 +26,7 @@ struct GpsData GPS::read() {
         }
     }
 
+    std::cout << gps.latitudeDegrees <<std::endl;
 
     if (gps.fix){
     gpsData.fix = true;

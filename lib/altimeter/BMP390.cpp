@@ -136,11 +136,9 @@ bool BMP390::performReading(void) {
   if (rslt != BMP3_OK)
     return false;
 
-
   temperature = data.temperature;
   pressure = data.pressure;
-  std::cout << temperature << " c\n";
-  std::cout << pressure<< " p\n";
+
   return true;
 }
 
@@ -198,18 +196,26 @@ bool BMP390::setOutputDataRate(uint8_t odr) {
 }
 
 int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-
-  if (!i2c_write_then_read(reinterpret_cast<char*>(&reg_addr), 1, reinterpret_cast<char*>(reg_data), len)) {
-    return 1;
+  for (uint32_t i = 0; i < len; i++) {
+    int data = wiringPiI2CReadReg8(g_handler, reg_addr + i);
+    if (data == -1) {
+      return 1; // Return error if reading fails
+    }
+    reg_data[i] = data;
   }
-
   return 0;
 }
+
 
 // Implementing the i2c_write_then_read function
 bool i2c_write_then_read(char *write_buffer, size_t write_len, char *read_buffer, size_t read_len) {
   // Write to the device
+  std::cout << write_buffer << std::endl ;
+  std::cout << write_len << std::endl ;
+  std::cout << read_buffer << std::endl ;
+  
   for (int i = 0; i < write_len; i++) {
+    std::cout << write_buffer[i] << std::endl ;
     if (wiringPiI2CWrite(g_handler, write_buffer[i]) == -1) {
         std::cerr << "I2C write failed" << std::endl;
         return false;
@@ -229,14 +235,9 @@ bool i2c_write_then_read(char *write_buffer, size_t write_len, char *read_buffer
 }
 
 int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-  char write_buffer[len + 1];
-  write_buffer[0] = reg_addr;
-  std::copy(reg_data, reg_data + len, write_buffer + 1);
-
-  for (int i = 0; i < len + 1; i++) {
-    if (wiringPiI2CWrite(g_handler, write_buffer[i]) == -1) {
-        std::cerr << "I2C write failed" << std::endl;
-        return 1;
+   for (uint32_t i = 0; i < len; i++) {
+    if (wiringPiI2CWriteReg8(g_handler, reg_addr + i, reg_data[i]) == -1) {
+      return 1; // Return error if writing fails
     }
   }
   return 0;

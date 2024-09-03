@@ -78,12 +78,10 @@ size_t Ada_GPS::write(uint8_t c) {
 }
 
 char Ada_GPS::read(void) {
-  std::cout << "reading" << std::endl;
     static uint32_t firstChar = 0;
  // first character received in current sentence
     uint32_t tStart = millis();  // as close as we can get to time char was sent
     char c = 0;
-  std::cout << "did read" << std::endl;
     if (paused)
         return c;
 

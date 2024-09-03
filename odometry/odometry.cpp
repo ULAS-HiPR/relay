@@ -28,13 +28,13 @@ int main() {
             std::cout << "Fix Quality: " << gpsData.fixquality << std::endl;
             std::cout << "Satellites: " << gpsData.satellites << std::endl;
             //rate limiting
-
+            usleep(500000);
         } else {
           std::cout << "Fix: No" << std::endl;
-          
+          usleep(10000);
         }
-        usleep(1000);
-        std::cout<< "\n"; 
+        usleep(500000);
+        std::cout<< u8"\033[2J\033[1;1H"; 
     }
     return 0;
 }
