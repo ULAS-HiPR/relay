@@ -13,6 +13,8 @@ BMP390
 altimeter
 telemetryMain
 odometryMain
+altTest
+gpsTest
 
 
 # Images
