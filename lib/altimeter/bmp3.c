@@ -39,7 +39,6 @@
 /*! @file bmp3.c
  * @brief Sensor driver for BMP3 sensor */
 #include "bmp3.h"
-
 /***************** Static function declarations ******************************/
 
 /*!
@@ -1395,12 +1394,12 @@ int8_t bmp3_get_sensor_data(uint8_t sensor_comp, struct bmp3_data *comp_data, st
     {
         /* Read the pressure and temperature data from the sensor */
         rslt = bmp3_get_regs(BMP3_REG_DATA, reg_data, BMP3_LEN_P_T_DATA, dev);
-
         if (rslt == BMP3_OK)
         {
+
             /* Parse the read data from the sensor */
             parse_sensor_data(reg_data, &uncomp_data);
-
+            
             /* Compensate the pressure/temperature/both data read
              * from the sensor */
             rslt = compensate_data(sensor_comp, &uncomp_data, comp_data, &dev->calib_data);

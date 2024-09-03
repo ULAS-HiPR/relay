@@ -1,6 +1,5 @@
 #include <iostream>
 #include "altimeter.h"
-#include <pigpio.h>
 #include <iomanip>
 #include <fstream>
 
@@ -30,3 +29,4 @@ struct AltData Altimeter::read() {
 
     return reading;
 }
+

@@ -1,6 +1,7 @@
 #include "BMP390.h"
 #include <iostream>
-#include <pigpio.h>
+#include <wiringPiI2C.h>
+#include <wiringPi.h>
 #include <math.h>
 #include "bmp3.h"
 
@@ -16,7 +17,7 @@ int g_handler = -1;
 // Our hardware interface functions
 
 bool BMP390::begin_I2C(uint8_t addr){
-  int handler = i2cOpen(1, addr, 0);
+  int handler = wiringPiI2CSetup(addr);
   g_handler = handler;
   if (handler == -1){
     std::cout << "Failed :(";
@@ -135,9 +136,11 @@ bool BMP390::performReading(void) {
   if (rslt != BMP3_OK)
     return false;
 
+
   temperature = data.temperature;
   pressure = data.pressure;
-
+  std::cout << temperature << " c\n";
+  std::cout << pressure<< " p\n";
   return true;
 }
 
@@ -206,15 +209,20 @@ int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_pt
 // Implementing the i2c_write_then_read function
 bool i2c_write_then_read(char *write_buffer, size_t write_len, char *read_buffer, size_t read_len) {
   // Write to the device
-  if (i2cWriteDevice(g_handler, write_buffer, write_len) != 0) {
-    std::cerr << "I2C write failed" << std::endl;
-    return false;
+  for (int i = 0; i < write_len; i++) {
+    if (wiringPiI2CWrite(g_handler, write_buffer[i]) == -1) {
+        std::cerr << "I2C write failed" << std::endl;
+        return false;
+    }
   }
 
   // Read from the device
-  if (i2cReadDevice(g_handler, read_buffer, read_len) != read_len) {
-    std::cerr << "I2C read failed" << std::endl;
-    return false;
+  for (int i = 0; i < read_len; i++) {
+    read_buffer[i] = wiringPiI2CRead(g_handler);
+    if (read_buffer[i] == -1) {
+        std::cerr << "I2C read failed" << std::endl;
+        return false;
+    }
   }
 
   return true;
@@ -225,15 +233,17 @@ int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *
   write_buffer[0] = reg_addr;
   std::copy(reg_data, reg_data + len, write_buffer + 1);
 
-  if (i2cWriteDevice(g_handler, write_buffer, len + 1) != 0) {
-    std::cerr << "I2C write failed" << std::endl;
-    return 1;
+  for (int i = 0; i < len + 1; i++) {
+    if (wiringPiI2CWrite(g_handler, write_buffer[i]) == -1) {
+        std::cerr << "I2C write failed" << std::endl;
+        return 1;
+    }
   }
   return 0;
 }
 
 
-static void delay_usec(uint32_t us, void *intf_ptr) { gpioDelay(us); }
+static void delay_usec(uint32_t us, void *intf_ptr) { delayMicroseconds(us); }
 
 static int8_t validate_trimming_param(struct bmp3_dev *dev) {
   int8_t rslt;

@@ -1,6 +1,7 @@
 #include "Ada_GPS.h"
 #include <iostream>
-#include <pigpio.h>
+#include <wiringSerial.h>
+#include <wiringPi.h>
 #include <string.h>
 
 
@@ -12,14 +13,14 @@ Ada_GPS::Ada_GPS(const std::string &serialPort) :
 }
 
 bool Ada_GPS::begin(uint32_t baud) {
-    gpsSerialHandler = serOpen(const_cast<char*>(gpsSerialPort.c_str()), baud, 0);
+    gpsSerialHandler = serialOpen(const_cast<char*>(gpsSerialPort.c_str()), baud);
 
     if (gpsSerialHandler < 0) {
         std::cerr << "Failed to open serial port: " << gpsSerialPort << std::endl;
         return false;
     }
 
-    gpioSleep(PI_TIME_RELATIVE, 0, 10000);  // Delay for 10 milliseconds
+    delay(10);  // Delay for 10 milliseconds
     return true;
 }
 
@@ -56,7 +57,7 @@ size_t Ada_GPS::available(void) {
         return 0;
     }
     if (gpsSerialHandler >= 0) {
-        int availableBytes = serDataAvailable(gpsSerialHandler);
+         int availableBytes = serialDataAvail(gpsSerialHandler);
         if (availableBytes < 0) {
             std::cerr << "Failed to check available data on serial port" << std::endl;
             return 0;
@@ -69,29 +70,27 @@ size_t Ada_GPS::available(void) {
 
 size_t Ada_GPS::write(uint8_t c) {
     if (gpsSerialHandler >= 0) {
-        if (serWriteByte(gpsSerialHandler, c) == 0) {
-            return 1;  // Return 1 byte written successfully
-        } else {
-            std::cerr << "Failed to write byte to serial port" << std::endl;
-            return 0;  // Failed to write the byte
-        }
-    }
+        serialPutchar(gpsSerialHandler, c);
+        return 1;
+      }
+    return 0;  // Failed to write the byte
 
-    return 0;  // Serial handler not initialized
 }
 
 char Ada_GPS::read(void) {
-    static uint32_t firstChar = 0; // first character received in current sentence
-    uint32_t tStart = gpioTick();  // as close as we can get to time char was sent
+  std::cout << "reading" << std::endl;
+    static uint32_t firstChar = 0;
+ // first character received in current sentence
+    uint32_t tStart = millis();  // as close as we can get to time char was sent
     char c = 0;
-
+  std::cout << "did read" << std::endl;
     if (paused)
         return c;
 
     if (gpsSerialHandler >= 0) {
-        if (serDataAvailable(gpsSerialHandler) <= 0)
+        if (serialDataAvail(gpsSerialHandler) <= 0)
             return c;
-        c = serReadByte(gpsSerialHandler);
+        c = serialGetchar(gpsSerialHandler);
     }
 
     // Serial.print(c);
@@ -116,7 +115,7 @@ char Ada_GPS::read(void) {
         // Serial.println("----");
         lineidx = 0;
         recvdflag = true;
-        recvdTime = gpioTick(); // time we got the end of the string
+        recvdTime = millis(); // time we got the end of the string
         sentTime = firstChar;
         firstChar = 0; // there are no characters yet
         return c;      // wait until next character to set time
@@ -129,11 +128,10 @@ char Ada_GPS::read(void) {
 
 void Ada_GPS::sendCommand(const char *str) { 
     if (gpsSerialHandler >= 0) {
-        serWrite(gpsSerialHandler, const_cast<char*>(str), strlen(str));  // Write the command
-        serWrite(gpsSerialHandler,  const_cast<char*>("\n"), 1);           // Write the newline character
+        serialPuts(gpsSerialHandler, const_cast<char*>(str)); // Changed from serWrite to wiringSerial function
+        serialPuts(gpsSerialHandler, const_cast<char*>("\n"));   // Write the newline character
     }
 }
-
 
 bool Ada_GPS::newNMEAreceived(void) { return recvdflag; }
 
@@ -184,10 +182,6 @@ bool Ada_GPS::wakeup(void) {
   } else {
     return false; // Returns false if not in standby mode, nothing to wakeup
   }
-}
-
-inline uint32_t millis() {
-    return gpioTick() / 1000;
 }
 
 nmea_float_t Ada_GPS::secondsSinceFix() {

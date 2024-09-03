@@ -2,16 +2,13 @@
 #include "altimeter/altimeter.h"
 #include <unistd.h>
 #include <iostream>
-#include <pigpio.h>
+#include <wiringPi.h> 
 
 int main() {
-    if (gpioInitialise() < 0) {
-        printf("pigpio initialization failed");
-        return 0;
-    }
+    wiringPiSetupGpio();
 
     Altimeter alt(1016.0);
-    GPS gps("/dev/ttyS0");
+    GPS gps("/dev/ttyAMA10");
     while (true) {
         struct AltData altData = alt.read();
         struct GpsData gpsData = gps.read();
@@ -31,12 +28,13 @@ int main() {
             std::cout << "Fix Quality: " << gpsData.fixquality << std::endl;
             std::cout << "Satellites: " << gpsData.satellites << std::endl;
             //rate limiting
-            usleep(500000);
+
         } else {
           std::cout << "Fix: No" << std::endl;
-          usleep(10000);
+          
         }
-        std::cout<< u8"\033[2J\033[1;1H"; 
+        usleep(1000);
+        std::cout<< "\n"; 
     }
     return 0;
 }

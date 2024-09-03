@@ -103,7 +103,7 @@ public:
                               unsigned historyInterval = 20,
                               unsigned historyN = 192);
   void removeHistory(nmea_index_t idx);
-  void showDataValue(nmea_index_t idx, int n = 7);
+  //void showDataValue(nmea_index_t idx, int n = 7);
   bool isCompoundAngle(nmea_index_t idx);
 #endif
   nmea_float_t boatAngle(nmea_float_t s, nmea_float_t c);

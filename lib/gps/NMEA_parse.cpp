@@ -23,8 +23,7 @@
 #include "Ada_GPS.h"
 #include <string.h>
 #include <algorithm>
-#include <pigpio.h>
-
+#include <wiringPi.h>
 
 /**************************************************************************/
 /*!
@@ -549,7 +548,7 @@ bool Ada_GPS::parse(char *nmea) {
   // Record the successful parsing of where the last data came from and when
   strcpy(lastSource, thisSource);
   strcpy(lastSentence, thisSentence);
-  lastUpdate = gpioTick() / 1000;
+  lastUpdate = millis() / 1000;
   return true;
 }
 

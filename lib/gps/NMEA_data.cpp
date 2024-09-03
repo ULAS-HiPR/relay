@@ -33,11 +33,9 @@
 #include <algorithm>
 #include <cmath>
 #include <string.h>
+#include <wiringPi.h>
 #define RAD_TO_DEG 57.295779513082320876798154814105
 
-uint32_t millis() {
-    return gpioTick() / 1000; // Convert microseconds to milliseconds
-}
 /**************************************************************************/
 /*!
     @brief Update the value and history information with a new value. Call
@@ -445,56 +443,7 @@ void Ada_GPS::removeHistory(nmea_index_t idx) {
     @return none
 */
 /**************************************************************************/
-void Ada_GPS::showDataValue(nmea_index_t idx, int n) {
-  char buf[256]; // Buffer for storing debug information
-  snprintf(buf, sizeof(buf), "idx: %s%d, %s, %.4f, %.4f, at %lu ms, tau = %lu ms, type: %d, ockam: %d",
-           (idx < 10 ? " " : ""), idx, val[idx].label, val[idx].latest, val[idx].smoothed, val[idx].lastUpdate,
-           val[idx].response, val[idx].type, val[idx].ockam);
 
-  // Print the debug information to GPIO pins
-  gpioWaveAddSerial(17, 9600, 8, 0, 1, strlen(buf), buf); // GPIO 17 is used for TX
-  gpioWaveCreate();
-  
-  // Check if there's history data
-  if (val[idx].hist) {
-    snprintf(buf, sizeof(buf), "\n     History at %u second intervals:  %f", 
-             val[idx].hist->historyInterval, val[idx].hist->data[val[idx].hist->n - 1]);
-
-    // Print history data to GPIO pins
-    gpioWaveAddSerial(17, 9600, 8, 0, 1, strlen(buf), buf); // GPIO 17 is used for TX
-    gpioWaveCreate();
-
-    // Print additional history data
-    for (unsigned i = val[idx].hist->n - 2; i >= std::max(val[idx].hist->n - n, static_cast<unsigned>(0)); i--) {
-      snprintf(buf, sizeof(buf), ", %f", val[idx].hist->data[i]);
-
-      // Print additional history data to GPIO pins
-      gpioWaveAddSerial(17, 9600, 8, 0, 1, strlen(buf), buf); // GPIO 17 is used for TX
-      gpioWaveCreate();
-    }
-  }
-
-  // Print latitude information
-  if (idx == NMEA_LAT) {
-    snprintf(buf, sizeof(buf), "\n     latitude (DDMM.mmmm): %.4f, lat: %c, latitudeDegrees: %.8f, latitude_fixed: %d",
-             latitude, lat, latitudeDegrees, latitude_fixed);
-
-    // Print latitude information to GPIO pins
-    gpioWaveAddSerial(17, 9600, 8, 0, 1, strlen(buf), buf); // GPIO 17 is used for TX
-    gpioWaveCreate();
-  }
-
-  // Print longitude information
-  if (idx == NMEA_LON) {
-    snprintf(buf, sizeof(buf), "\n     longitude (DDMM.mmmm): %.4f, lon: %c, longitudeDegrees: %.8f, longitude_fixed: %d",
-             longitude, lon, longitudeDegrees, longitude_fixed);
-
-    // Print longitude information to GPIO pins
-    gpioWaveAddSerial(17, 9600, 8, 0, 1, strlen(buf), buf); // GPIO 17 is used for TX
-    gpioWaveCreate();
-  }
-
-}
 
 /**************************************************************************/
 /*!
