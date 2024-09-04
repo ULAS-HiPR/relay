@@ -5,7 +5,7 @@
 
 CC            = g++
 CFLAGS        = -DRASPBERRY_PI -DBCM2835_NO_DELAY_COMPATIBILITY -D__BASEFILE__=\"$*\"
-LIBS          = -lbcm2835
+LIBS          = -lwiringPi
 RADIOHEADBASE = ../lib/telemetry
 INCLUDE       = -I$(RADIOHEADBASE)
 

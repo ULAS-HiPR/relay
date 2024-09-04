@@ -7,8 +7,6 @@
 #ifndef RASPI_h
 #define RASPI_h
 
-#include <bcm2835.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -21,11 +19,11 @@ typedef unsigned char byte;
 #endif
 
 #ifndef OUTPUT
-  #define OUTPUT BCM2835_GPIO_FSEL_OUTP
+  #define OUTPUT 1
 #endif
 
 #ifndef INPUT
-  #define INPUT BCM2835_GPIO_FSEL_INPT
+  #define INPUT 0
 #endif
 
 #ifndef NOT_A_PIN
@@ -80,10 +78,6 @@ void pinMode(unsigned char pin, unsigned char mode);
 void digitalWrite(unsigned char pin, unsigned char value);
 
 unsigned char digitalRead(unsigned char pin) ;
-
-unsigned long millis();
-
-void delay (unsigned long delay);
 
 long random(long min, long max);
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 PROGRAM_NAME="ASOdometry"
-SOURCE_DIR="/home/agrisat/relay/odometry"
+SOURCE_DIR="/home/EanSat/relay/odometry"
 SERVICE_DIR="/etc/systemd/system"
 BINARY="odometryMain"
 
@@ -8,7 +8,7 @@ g++ odometry.cpp gps/GPS.cpp ../lib/gps/Ada_GPS.cpp ../lib/gps/NMEA_build.cpp ..
 
 sudo tee "$SERVICE_DIR/$PROGRAM_NAME.service" > /dev/null << EOF
 [Unit]
-Description=AgriSat Odometry Service
+Description=EanSat Odometry Service
 After=network.target
 [Service]
 Type=simple

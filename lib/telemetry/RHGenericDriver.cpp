@@ -4,6 +4,7 @@
 // $Id: RHGenericDriver.cpp,v 1.20 2017/01/12 23:58:00 mikem Exp $
 
 #include <RHGenericDriver.h>
+#include <wiringPi.h>
 
 RHGenericDriver::RHGenericDriver()
     :

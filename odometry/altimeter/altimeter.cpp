@@ -30,3 +30,17 @@ struct AltData Altimeter::read() {
     return reading;
 }
 
+char* Altimeter::serializeAltData(struct AltData* data) {
+    char* jsonString = (char*)malloc(128);  // Allocate memory for JSON string
+    if (!jsonString) {
+        printf("Failed to allocate memory for JSON string\n");
+        exit(EXIT_FAILURE);
+    }
+
+    sprintf(jsonString, 
+        "{\"temp\": %.2f, \"pressure\": %.2f, \"alt\": %.2f}",
+        data->temp, data->pressure, data->alt
+    );
+
+    return jsonString;
+}

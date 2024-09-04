@@ -8,6 +8,7 @@ class GPS{
 public:
     GPS(const std::string &serialPort);
     struct GpsData read();
+    char* serializeGpsData(struct GpsData* data);
 private:
     Ada_GPS gps; 
     const std::string port;

@@ -8,6 +8,7 @@ class Altimeter{
 public:
     Altimeter(double sea_pressure);
     struct AltData read();
+    char* serializeAltData(struct AltData* data);
 private:
     BMP390 bmp;
     double sea_pressure;

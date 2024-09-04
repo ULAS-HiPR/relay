@@ -6,7 +6,9 @@ int main() {
     std::string input;
     std::string line;
     bool capturing = false;
+
     while (true) {
+        std::cout << "working";
         std::getline(std::cin, line);
 
         if (line.find('<') != std::string::npos) {

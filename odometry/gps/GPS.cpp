@@ -53,3 +53,20 @@ struct GpsData GPS::read() {
 
     return gpsData;
 }
+
+char* GPS::serializeGpsData(struct GpsData* data) {
+    char* jsonString = (char*)malloc(256);  // Allocate memory for JSON string
+    if (!jsonString) {
+        printf("Failed to allocate memory for JSON string\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    sprintf(jsonString, 
+        "{\"fix\": %d, \"latitudeDegrees\": %.6f, \"longitudeDegrees\": %.6f, \"geoidheight\": %.2f, "
+        "\"altitude\": %.2f, \"speed\": %.2f, \"fixquality\": %d, \"satellites\": %d}",
+        data->fix, data->latitudeDegrees, data->longitudeDegrees, data->geoidheight,
+        data->altitude, data->speed, data->fixquality, data->satellites
+    );
+
+    return jsonString;
+}
