@@ -89,5 +89,4 @@ func GetCPUusage() float64 {
 	usagePercentage := 100.0 - idlePercentage
 
 	return usagePercentage
-
 }
