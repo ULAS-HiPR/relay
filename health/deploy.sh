@@ -1,14 +1,12 @@
 #!/bin/bash
-PROGRAM_NAME="ES_Odometry"
-SOURCE_DIR="/home/EanSat/relay/odometry"
+PROGRAM_NAME="ESHealth"
+SOURCE_DIR="/home/EanSat/relay/health"
 SERVICE_DIR="/etc/systemd/system"
-BINARY="odometryMain"
-
-g++ odometry.cpp gps/GPS.cpp ../lib/gps/Ada_GPS.cpp ../lib/gps/NMEA_build.cpp ../lib/gps/NMEA_data.cpp ../lib/gps/NMEA_parse.cpp altimeter/altimeter.cpp ../lib/altimeter/BMP390.cpp ../lib/altimeter/bmp3.c -o odometryMain -lwiringPi -lrt -lpthread -lpaho-mqtt3c
+BINARY="health"
 
 sudo tee "$SERVICE_DIR/$PROGRAM_NAME.service" > /dev/null << EOF
 [Unit]
-Description=EanSat Odometry Service
+Description=EanSat Telemetry Service
 After=network.target
 [Service]
 Type=simple

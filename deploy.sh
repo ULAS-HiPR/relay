@@ -2,7 +2,9 @@
 
 folders=(
     "camera"
-    "agrinet"
+    "health"
+    "odometry"
+    "telemetry"
 )
 
 for folder in "${folders[@]}"

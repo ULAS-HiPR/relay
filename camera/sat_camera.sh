@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-OUTPUT_DIR="/home/agrisat/relay/results/camera"
+OUTPUT_DIR="/home/EanSat/relay/results/camera"
 WIDTH=640
 HEIGHT=480
 INTERVAL=1 # Interval in seconds

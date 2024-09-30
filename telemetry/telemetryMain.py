@@ -5,13 +5,13 @@ import paho.mqtt.client as mqtt
 import adafruit_rfm9x
 import json
 
-RADIO_FREQ_MHZ = 868.0 
+RADIO_FREQ_MHZ = 433.0 
 
 CS = digitalio.DigitalInOut(board.CE1)
 RESET = digitalio.DigitalInOut(board.D25)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
-
+rfm9x.node = 255
 rfm9x.tx_power = 23
 
 

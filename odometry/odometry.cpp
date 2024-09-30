@@ -39,7 +39,7 @@ int main() {
     //gpio setup
     wiringPiSetupGpio();
 
-    Altimeter alt(1016.0);
+    Altimeter alt(1023.0);
     GPS gps("/dev/ttyAMA10");
 
     while (true) {
