@@ -4,8 +4,8 @@
 EXECUTABLE="sat_camera"
 echo "Deploying $EXECUTABLE service..."
 
-SOURCE_DIR="/home/agrisat/relay/camera"
-OUTPUT_DIR="/home/agrisat/relay/results/camera"
+SOURCE_DIR="/home/EanSat/relay/camera"
+OUTPUT_DIR="/home/EanSat/relay/results/camera"
 
 chmod +x $SOURCE_DIR/$EXECUTABLE.sh
 echo "Service executable permissions set"
@@ -15,4 +15,4 @@ rm -rf $OUTPUT_DIR/*
 echo "Output directory cleaned"
 
 echo "Starting $EXECUTABLE service..."
-./"$SOURCE_DIR/$EXECUTABLE".sh
+"$SOURCE_DIR/$EXECUTABLE".sh

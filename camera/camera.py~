@@ -1,0 +1,43 @@
+from picamera2 import Picamera2, Preview
+from datetime import datetime
+from libcamera import ColorSpace
+import cv2
+import numpy as np
+import tflite_runtime.interpreter as tflite
+from PIL import Image
+
+picam2 = Picamera2()
+picam2.configure(picam2.create_video_configuration(
+    main={"format": 'XRGB8888', "size": (500, 500)})
+)
+
+interpreter = tflite.Interpreter(model_path='/home/EanSat/models/11_10__MULTICLASS_OUTPUT.tflite')
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+picam2.start()
+
+writer = cv2.VideoWriter('test.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (500, 500), True)
+
+for i in range(0,1):
+    input_shape = input_details[0]['shape']
+
+    im = picam2.capture_array()
+    writer.write(im)
+    interpreter.set_tensor(input_details[0]['index'], np.asarray([np.transpose(im[:,:,0:3], (2,0,1))]).astype('float32'))
+    
+    interpreter.invoke()
+
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    breakpoint()
+    output_image = Image.fromarray(np.transpose(output_data[0], (2,0,1)))
+    output_image.save("/home/EanSat/relay/camera/test.tiff")
+
+#picam2 = Picamera2()
+#config = picam2.create_still_configuration(main={"size": (500, 500)}, lores={"size": (500, 500)}, encode="main")
+#picam2.configure(config)
+#picam2.start_preview(Preview.NULL)
+#picam2.capture_file("/home/EanSat/relay/camera/" + current_time + ".jpg", format="jpg", wait=False)
+

@@ -6,14 +6,13 @@ import (
 	"net/url"
 	"os"
 	"time"
-	"strconv"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 // Function to check for errors
 func check(err error) {
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
 		os.Exit(1)
 	}
 }
@@ -33,9 +32,9 @@ func connect(clientId string, uri *url.URL) mqtt.Client {
 
 func listen(uri *url.URL, topic string, channel_state *string) {
 	client := connect("sub", uri)
-	fmt.Println(fmt.Sprintf("LISTENING TO %s", string(topic)))
+	//fmt.Println(fmt.Sprintf("LISTENING TO %s", string(topic)))
 	client.Subscribe(topic, 0, func(client mqtt.Client, msg mqtt.Message) {
-		fmt.Println(fmt.Sprintf("%s RECEIVED", msg.Topic()))
+		//fmt.Println(fmt.Sprintf("%s RECEIVED", msg.Topic()))
 		*channel_state = string(msg.Payload())
 	})
 }
@@ -51,24 +50,26 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(uri.Path)
+	//fmt.Println(uri.Path)
 
 	health := ""
-	odom := ""
+	gps := ""
+	alt := ""
 
 	go listen(uri, "HEALTH", &health)
-	go listen(uri, "ODOM", &odom)
+	go listen(uri, "GPS", &gps)
+	go listen(uri, "ALT", &alt)
 
 	client := connect("pub", uri)
 
 	for {
-		if (health == "" || odom == "") {
+		if (health == "" || gps == "" || alt == "") {
 			time.Sleep(5*time.Millisecond)
 			continue	
 		}
-		client.Publish("COLLATED", 0, false, fmt.Sprintf(`{"HEALTH": %s, "ODOM": %s}`, health, odom))
+		client.Publish("COLLATED", 0, false, fmt.Sprintf(`{"HEALTH": %s, "GPS": %s, "ALT": %s}`, health, gps, alt))
 		time.Sleep(500*time.Millisecond)
-		fmt.Println(strconv.Itoa(count))
+		//fmt.Println(strconv.Itoa(count))
 		count++
 	}
 

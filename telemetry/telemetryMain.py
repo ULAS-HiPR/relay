@@ -14,15 +14,23 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
 rfm9x.node = 255
 rfm9x.tx_power = 23
 
-
-
 print("Sent Hello World message!")
 
-health_data = None
-gps_data = None
-alt_data = None
+#health_data = None
+#gps_data = None
+#alt_data = None
 
+def parse_collated_data(collated_data):
+    parsed_data = json.loads(collated_data)
 
+    health = parsed_data["HEALTH"]
+
+    gps = parsed_data["GPS"]
+
+    alt = parsed_data["ALT"]
+
+    return json.dumps(health), json.dumps(gps), json.dumps(alt)
+    
 def send_radio(data):
     rfm9x.send(bytes(data, "utf-8"))
     print(f"\nSending data through radio: \n{data}")
@@ -54,38 +62,32 @@ def formatAlt(data):
 
     return returns.strip()
 
-def check_and_send():
-    global health_data, gps_data, alt_data
-    if health_data is not None and gps_data is not None and alt_data is not None:
-        combined_data = "Health:{"+formatHeath(health_data)+ "}\n"+ "GPS:{" +formatGps(gps_data)+ "}\n"+"Altitude:{"+ formatAlt(alt_data) + "}"
+def check_and_send(health_data, gps_data, alt_data):
+    #    global health_data, gps_data, alt_data
+   # if health_data is not None and gps_data is not None and alt_data is not None:
+    combined_data = "Health:{"+formatHeath(health_data)+ "}\n"+ "GPS:{" +formatGps(gps_data)+ "}\n"+"Altitude:{"+ formatAlt(alt_data) + "}"
     
-        send_radio(combined_data)
+    #send_radio(combined_data)
       
-        health_data = None
-        gps_data = None
-        alt_data = None
+        #health_data = None
+        #gps_data = None
+        #alt_data = None
 
 def on_message(client, userdata, message):
-    global health_data, gps_data, alt_data
+    #global health_data, gps_data, alt_data
 
-    topic = message.topic
+#    topic = message.topic
     payload = message.payload.decode()
+    print(payload)
 
-    if topic == "HEALTH":
-        health_data = payload
-    elif topic == "GPS":
-        gps_data = payload
-    elif topic == "ALT":
-        alt_data = payload
+    health_data, gps_data, alt_data = parse_collated_data(payload)
 
-    check_and_send()
+    check_and_send(health_data, gps_data, alt_data)
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
     # Subscribing in on_connect ensures that if we lose the connection and reconnect, subscriptions will be renewed
-    client.subscribe("HEALTH")
-    client.subscribe("GPS")
-    client.subscribe("ALT")
+    client.subscribe("COLLATED")
 
 def setup_mqtt():
     client = mqtt.Client()
