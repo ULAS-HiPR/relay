@@ -1,5 +1,5 @@
 #!/bin/bash
-PROGRAM_NAME="ES_Odometry"
+PROGRAM_NAME="ESOdometry"
 SOURCE_DIR="/home/EanSat/relay/odometry"
 SERVICE_DIR="/etc/systemd/system"
 BINARY="odometryMain"

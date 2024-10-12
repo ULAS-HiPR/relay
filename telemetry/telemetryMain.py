@@ -67,7 +67,7 @@ def check_and_send(health_data, gps_data, alt_data):
    # if health_data is not None and gps_data is not None and alt_data is not None:
     combined_data = "Health:{"+formatHeath(health_data)+ "}\n"+ "GPS:{" +formatGps(gps_data)+ "}\n"+"Altitude:{"+ formatAlt(alt_data) + "}"
     
-    #send_radio(combined_data)
+    send_radio(combined_data)
       
         #health_data = None
         #gps_data = None
