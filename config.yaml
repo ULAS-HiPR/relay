@@ -1,0 +1,14 @@
+logs:
+  log_path: "sat-x.log"
+  max_size: 10
+  max_backups: 1
+  max_age: 28
+  compress: false
+  log_level: "debug"
+
+sensors:
+  frequency_seconds: 60
+
+rmq:
+  connection_string: "amqp:user:pass@host:port"
+

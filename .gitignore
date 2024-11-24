@@ -1,0 +1,64 @@
+# Logs
+logs/
+*.log
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go modules
+go.sum
+go.work
+go.work.sum
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+._*
+
+# Vim temporary files
+*.swp
+*.swo
+
+# JetBrains IDEs
+.idea/
+
+# VSCode settings
+.vscode/
+.vscode/*
+
+# Node.js dependencies (if using a hybrid setup)
+node_modules/
+
+# Dependency directories
+vendor/
+
+# Go build cache
+Gopkg.lock
+Gopkg.toml
+
+# Directories related to tooling
+.coverage/
+*.cov
+testfiles/
+
+# Coverage reports
+*.out
+
+# or for mac system files
+*.DS_Store
+
+# env files
+.env
+.env.*
+
+# IDE meta files
+*.iml
+

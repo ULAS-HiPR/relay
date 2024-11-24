@@ -1,0 +1,11 @@
+[Unit]
+Description=sat-x 
+After=network.target
+
+[Service]
+ExecStart=/home/pi/sat-x
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
